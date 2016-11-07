@@ -36,7 +36,7 @@ import js.html.CanvasRenderingContext2D;
 	
 	
 	private var __bounds:Rectangle;
-	private var __commands:DrawCommandBuffer;
+	public var __commands:DrawCommandBuffer;
 	private var __dirty (default, set):Bool = true;
 	private var __height:Int;
 	private var __positionX:Float;

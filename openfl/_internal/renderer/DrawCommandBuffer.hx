@@ -11,6 +11,7 @@ import openfl.display.LineScaleMode;
 import openfl.display.Shader;
 import openfl.display.SpreadMethod;
 import openfl.display.TriangleCulling;
+import openfl.geom.Rectangle;
 import openfl.geom.Matrix;
 import openfl.Vector;
 
@@ -24,6 +25,9 @@ class DrawCommandBuffer {
 	
 	public var length (get, never):Int; 
 	public var types:Array<DrawCommandType>;
+	
+	public var requiresSoftware:Bool;
+	public var bitmapDraws:Array<{bd:BitmapData, transform:Matrix}>;
 	
 	private var b:Array<Bool>;
 	private var copyOnWrite:Bool;
@@ -48,6 +52,7 @@ class DrawCommandBuffer {
 			ii = [];
 			
 			copyOnWrite = true;
+			bitmapDraws = [];
 			
 		} else {
 			
@@ -55,6 +60,77 @@ class DrawCommandBuffer {
 			
 		}
 		
+	}
+	
+	public function updateBitmapDraws():Void {
+		
+		var reader = new DrawCommandReader (this);
+		var bitmap = null;
+		var points = [];
+		
+		bitmapDraws = [];
+		requiresSoftware = false;
+		
+		for(type in types) {
+			
+			switch(type){
+			
+				case BEGIN_BITMAP_FILL:
+					var c = reader.readBeginBitmapFill();
+					bitmap = c.bitmap;
+					
+				case END_FILL : 
+					reader.skip(type);
+					points = [];
+					bitmap = null;
+					
+				case DRAW_RECT :
+					var c = reader.readDrawRect();
+					var transform = new Matrix();
+					transform.translate(c.x, c.y);
+					transform.scale(c.width / bitmap.width, c.height / bitmap.height);
+					bitmapDraws.push({bd:bitmap, transform:transform});		
+					
+				case LINE_TO : 
+					var point = reader.readLineTo();
+					points.push({x:point.x, y:point.y});
+					
+					if(points.length == 4) {
+						if(bitmap != null){
+							var minX = Math.POSITIVE_INFINITY;
+							var minY = Math.POSITIVE_INFINITY;
+							var maxX = Math.NEGATIVE_INFINITY;
+							var maxY = Math.NEGATIVE_INFINITY;
+							var transform = new Matrix();
+							
+							for(p in points){
+								if(p.x < minX) minX = p.x;
+								if(p.y < minY) minY = p.y;
+								if(p.x > maxX) maxX = p.x;
+								if(p.y > maxY) maxY = p.y;
+							}
+							
+							transform.translate(minX, minY);
+							transform.scale(Math.abs(maxX - minX) / bitmap.width, Math.abs(maxY - minY) / bitmap.height);
+							bitmapDraws.push({bd:bitmap, transform:transform});	
+						}
+						points = [];
+					}
+					
+				case MOVE_TO, LINE_STYLE : 
+					reader.skip(type);
+				
+				default : 
+					requiresSoftware = true;
+					reader.skip(type);
+					
+					break;
+			}
+		}
+		
+		
+		
+		reader.destroy();
 	}
 	
 	
@@ -70,6 +146,8 @@ class DrawCommandBuffer {
 			this.ff = other.ff;
 			this.ii = other.ii;
 			this.copyOnWrite = other.copyOnWrite = true;
+			this.bitmapDraws = other.bitmapDraws.copy();
+			this.requiresSoftware = other.requiresSoftware;
 			
 			return other;
 			
@@ -105,6 +183,8 @@ class DrawCommandBuffer {
 		}
 		
 		data.destroy ();
+		
+		updateBitmapDraws();
 		return other;
 		
 	}
@@ -120,6 +200,8 @@ class DrawCommandBuffer {
 		b.push (repeat);
 		b.push (smooth);
 		
+		updateBitmapDraws();
+		
 	}
 	
 	public function beginFill (color:Int, alpha:Float):Void {
@@ -127,6 +209,7 @@ class DrawCommandBuffer {
 		prepareWrite ();
 		
 		types.push (BEGIN_FILL);
+		updateBitmapDraws();
 		i.push (color);
 		f.push (alpha);
 		
@@ -138,6 +221,7 @@ class DrawCommandBuffer {
 		prepareWrite ();
 		
 		types.push (BEGIN_GRADIENT_FILL);
+		updateBitmapDraws();
 		o.push (type);
 		ii.push (colors);
 		ff.push (alphas);
@@ -153,6 +237,7 @@ class DrawCommandBuffer {
 	public function clear ():Void {
 		
 		types = empty.types;
+		updateBitmapDraws();
 		
 		b = empty.b;
 		i = empty.i;
@@ -180,6 +265,7 @@ class DrawCommandBuffer {
 		prepareWrite ();
 		
 		types.push (CUBIC_CURVE_TO);
+		updateBitmapDraws();
 		f.push (controlX1);
 		f.push (controlY1);
 		f.push (controlX2);
@@ -194,6 +280,7 @@ class DrawCommandBuffer {
 		prepareWrite ();
 		
 		types.push (CURVE_TO);
+		updateBitmapDraws();
 		f.push (controlX);
 		f.push (controlY);
 		f.push (anchorX);
@@ -223,6 +310,7 @@ class DrawCommandBuffer {
 		prepareWrite ();
 		
 		types.push (DRAW_CIRCLE);
+		updateBitmapDraws();
 		f.push (x);
 		f.push (y);
 		f.push (radius);
@@ -235,6 +323,7 @@ class DrawCommandBuffer {
 		prepareWrite ();
 		
 		types.push (DRAW_ELLIPSE);
+		updateBitmapDraws();
 		f.push (x);
 		f.push (y);
 		f.push (width);
@@ -248,6 +337,7 @@ class DrawCommandBuffer {
 		prepareWrite ();
 		
 		types.push (DRAW_RECT);
+		updateBitmapDraws();
 		f.push (x);
 		f.push (y);
 		f.push (width);
@@ -260,6 +350,7 @@ class DrawCommandBuffer {
 		prepareWrite ();
 		
 		types.push (DRAW_ROUND_RECT);
+		updateBitmapDraws();
 		f.push (x);
 		f.push (y);
 		f.push (width);
@@ -275,6 +366,7 @@ class DrawCommandBuffer {
 		prepareWrite ();
 		
 		types.push (DRAW_TRIANGLES);
+		updateBitmapDraws();
 		o.push (vertices);
 		o.push (indices);
 		o.push (uvtData);
@@ -288,6 +380,7 @@ class DrawCommandBuffer {
 		prepareWrite ();
 		
 		types.push (END_FILL);
+		updateBitmapDraws();
 		
 	}
 	
@@ -297,6 +390,7 @@ class DrawCommandBuffer {
 		prepareWrite ();
 		
 		types.push (LINE_BITMAP_STYLE);
+		updateBitmapDraws();
 		o.push (bitmap);
 		o.push (matrix);
 		b.push (repeat);
@@ -310,6 +404,7 @@ class DrawCommandBuffer {
 		prepareWrite ();
 		
 		types.push (LINE_GRADIENT_STYLE);
+		updateBitmapDraws();
 		o.push (type);
 		ii.push (colors);
 		ff.push (alphas);
@@ -327,6 +422,7 @@ class DrawCommandBuffer {
 		prepareWrite ();
 		
 		types.push (LINE_STYLE);
+		updateBitmapDraws();
 		o.push (thickness);
 		i.push (color);
 		f.push (alpha);
@@ -344,6 +440,7 @@ class DrawCommandBuffer {
 		prepareWrite ();
 		
 		types.push (LINE_TO);
+		updateBitmapDraws();
 		f.push (x);
 		f.push (y);
 		
@@ -355,6 +452,7 @@ class DrawCommandBuffer {
 		prepareWrite ();
 		
 		types.push (MOVE_TO);
+		updateBitmapDraws();
 		f.push (x);
 		f.push (y);
 		
@@ -385,6 +483,7 @@ class DrawCommandBuffer {
 		prepareWrite ();
 		
 		types.push (OVERRIDE_MATRIX);
+		updateBitmapDraws();
 		o.push (matrix);
 		
 	}
