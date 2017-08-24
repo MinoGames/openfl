@@ -33,7 +33,11 @@ class BitmapSymbol extends SWFSymbol {
 	
 	private override function __createObject (swf:SWFLite):Bitmap {
 		
-		return new Bitmap (BitmapData.fromImage (swf.library.getImage (path)), PixelSnapping.AUTO, smooth != false);
+		var bmp = new Bitmap (BitmapData.fromImage (swf.library.getImage (path)), PixelSnapping.AUTO, smooth != false);
+
+		if (openfl._internal.swf.SWFLiteLibrary.scaleFactor != 1.0) bmp.scaleX = bmp.scaleY = 1 / openfl._internal.swf.SWFLiteLibrary.scaleFactor;
+
+		return bmp;
 		
 	}
 	

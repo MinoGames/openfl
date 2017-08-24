@@ -36,6 +36,9 @@ using StringTools;
 @:keep class SWFLiteLibrary extends AssetLibrary {
 	
 	
+	public static var scaleFactor:Float = 1.0;
+
+
 	private var alphaCheck:Map<String, Bool>;
 	private var id:String;
 	private var imageClassNames:Map<String, String>;
@@ -255,11 +258,13 @@ using StringTools;
 								
 								__copyChannel (image, alpha);
 								
+								if (scaleFactor != 1.0) image.resize(Std.int(image.width * scaleFactor), Std.int(image.height * scaleFactor));
+								
 								alpha.buffer = null;
 
 								cachedImages.set (id, image);
 								alphaCheck.set (id, true);
-								
+
 								promise.complete (image);
 								
 							});
@@ -276,8 +281,10 @@ using StringTools;
 			
 		}
 		
-		return super.loadImage (id);
-		
+		return super.loadImage (id).onComplete (function (image) {
+			if (scaleFactor != 1.0) image.resize(Std.int(image.width * scaleFactor), Std.int(image.height * scaleFactor));	
+		});
+
 	}
 	
 	
