@@ -26,11 +26,12 @@ import openfl.utils.AssetLibrary;
 import openfl.utils.AssetType;
 import openfl.utils.ByteArray;
 
+using StringTools;
+
 #if !openfl_debug
 @:fileXml('tags="haxe,release"')
 @:noDebug
 #end
-
 
 @:keep class SWFLiteLibrary extends AssetLibrary {
 	
@@ -208,7 +209,7 @@ import openfl.utils.ByteArray;
 			
 			for (id in paths.keys ()) {
 				
-				preload.set (id, true);
+				if (!id.endsWith('a.png')) preload.set (id, true);
 				
 			}
 			
@@ -254,6 +255,8 @@ import openfl.utils.ByteArray;
 								
 								__copyChannel (image, alpha);
 								
+								alpha.buffer = null;
+
 								cachedImages.set (id, image);
 								alphaCheck.set (id, true);
 								
