@@ -32,10 +32,17 @@ class BitmapSymbol extends SWFSymbol {
 	
 	
 	private override function __createObject (swf:SWFLite):Bitmap {
-		
-		var bmp = new Bitmap (BitmapData.fromImage (swf.library.getImage (path)), PixelSnapping.AUTO, smooth != false);
 
-		if (openfl._internal.swf.SWFLiteLibrary.scaleFactor != 1.0) bmp.scaleX = bmp.scaleY = 1 / openfl._internal.swf.SWFLiteLibrary.scaleFactor;
+		var image = swf.library.getImage (path);
+		var bmp = new Bitmap (BitmapData.fromImage (image), PixelSnapping.AUTO, smooth != false);
+
+		if (openfl._internal.swf.SWFLiteLibrary.scaleFactor != 1.0) {
+			var ratioX = image.originalWidth / (image.width * (1 / openfl._internal.swf.SWFLiteLibrary.scaleFactor));
+			var ratioY = image.originalHeight / (image.height * (1 / openfl._internal.swf.SWFLiteLibrary.scaleFactor));
+			
+			bmp.scaleX = 1 / openfl._internal.swf.SWFLiteLibrary.scaleFactor * ratioX;
+			bmp.scaleY = 1 / openfl._internal.swf.SWFLiteLibrary.scaleFactor * ratioY;
+		}
 
 		return bmp;
 		

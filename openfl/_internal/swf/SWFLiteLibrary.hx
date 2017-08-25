@@ -258,7 +258,7 @@ using StringTools;
 								
 								__copyChannel (image, alpha);
 								
-								if (scaleFactor != 1.0) image.resize(Std.int(image.width * scaleFactor), Std.int(image.height * scaleFactor));
+								if (scaleFactor != 1.0) image.resize(Math.ceil(image.width * scaleFactor), Math.ceil(image.height * scaleFactor));
 								
 								alpha.buffer = null;
 
@@ -282,7 +282,7 @@ using StringTools;
 		}
 		
 		return super.loadImage (id).onComplete (function (image) {
-			if (scaleFactor != 1.0) image.resize(Std.int(image.width * scaleFactor), Std.int(image.height * scaleFactor));	
+			if (scaleFactor != 1.0) image.resize(Math.ceil(image.width * scaleFactor), Math.ceil(image.height * scaleFactor));	
 		});
 
 	}

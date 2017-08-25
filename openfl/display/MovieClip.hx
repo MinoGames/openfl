@@ -361,10 +361,18 @@ class MovieClip extends Sprite #if openfl_dynamic implements Dynamic<DisplayObje
 		
 		if (frameObject.matrix != null) {
 			
-			displayObject.transform.matrix = frameObject.matrix;
+			if ((openfl._internal.swf.SWFLiteLibrary.scaleFactor != 1.0) && Std.is(displayObject, Bitmap)) {
+				var scaleX = displayObject.scaleX;
+				var scaleY = displayObject.scaleY;
 
-			if ((openfl._internal.swf.SWFLiteLibrary.scaleFactor != 1.0) && Std.is(displayObject, Bitmap)) displayObject.scaleX = displayObject.scaleY *= 1 / openfl._internal.swf.SWFLiteLibrary.scaleFactor;
-			
+				displayObject.transform.matrix = frameObject.matrix;
+				
+				displayObject.scaleX *= scaleX;
+				displayObject.scaleY *= scaleY;
+			} else {
+				displayObject.transform.matrix = frameObject.matrix;
+			}
+
 		}
 		
 		if (frameObject.colorTransform != null) {
