@@ -32,11 +32,6 @@ class SpriteSymbol extends SWFSymbol {
 		
 		var movieClip:MovieClip = null;
 		
-		#if !macro
-		MovieClip.__initSWF = swf;
-		MovieClip.__initSymbol = this;
-		#end
-		
 		if (className != null) {
 			
 			var symbolType = Type.resolveClass (className);
@@ -56,8 +51,9 @@ class SpriteSymbol extends SWFSymbol {
 		if (movieClip == null) {
 			
 			movieClip = new MovieClip ();
-			
 		}
+		
+		movieClip.__fromSymbol(swf, this);
 		
 		return movieClip;
 		
