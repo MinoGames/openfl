@@ -1256,7 +1256,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 		
 		onGamepadConnect (gamepad);
 		
-		gamepad.onAxisMove.add (onGamepadAxisMove.bind (gamepad));
+		//gamepad.onAxisMove.add (onGamepadAxisMove.bind (gamepad));
 		gamepad.onButtonDown.add (onGamepadButtonDown.bind (gamepad));
 		gamepad.onButtonUp.add (onGamepadButtonUp.bind (gamepad));
 		gamepad.onDisconnect.add (onGamepadDisconnect.bind (gamepad));
