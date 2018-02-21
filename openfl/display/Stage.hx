@@ -320,7 +320,8 @@ class Stage extends DisplayObjectContainer implements IModule {
 	
 	public function onGamepadAxisMove (gamepad:Gamepad, axis:GamepadAxis, value:Float):Void {
 		
-		try {
+        // Such a weird crash?
+		/*try {
 			
 			GameInput.__onGamepadAxisMove (gamepad, axis, value);
 			
@@ -328,7 +329,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 			
 			__handleError (e);
 			
-		}
+		}*/
 		
 	}
 	
