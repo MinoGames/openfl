@@ -336,7 +336,8 @@ class Stage extends DisplayObjectContainer implements IModule {
 	
 	public function onGamepadButtonDown (gamepad:Gamepad, button:GamepadButton):Void {
 		
-		try {
+		// Such a weird crash?
+		/*try {
 			
 			GameInput.__onGamepadButtonDown (gamepad, button);
 			
@@ -344,14 +345,15 @@ class Stage extends DisplayObjectContainer implements IModule {
 			
 			__handleError (e);
 			
-		}
+		}*/
 		
 	}
 	
 	
 	public function onGamepadButtonUp (gamepad:Gamepad, button:GamepadButton):Void {
 		
-		try {
+		// Such a weird crash?
+		/*try {
 			
 			GameInput.__onGamepadButtonUp (gamepad, button);
 			
@@ -359,14 +361,15 @@ class Stage extends DisplayObjectContainer implements IModule {
 			
 			__handleError (e);
 			
-		}
+		}*/
 		
 	}
 	
 	
 	public function onGamepadConnect (gamepad:Gamepad):Void {
 		
-		try {
+		// Such a weird crash?
+		/*try {
 			
 			GameInput.__onGamepadConnect (gamepad);
 			
@@ -374,14 +377,15 @@ class Stage extends DisplayObjectContainer implements IModule {
 			
 			__handleError (e);
 			
-		}
+		}*/
 		
 	}
 	
 	
 	public function onGamepadDisconnect (gamepad:Gamepad):Void {
 		
-		try {
+		// Such a weird crash?
+		/*try {
 			
 			GameInput.__onGamepadDisconnect (gamepad);
 			
@@ -389,7 +393,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 			
 			__handleError (e);
 			
-		}
+		}*/
 		
 	}
 	
