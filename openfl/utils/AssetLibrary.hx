@@ -6,7 +6,6 @@ import lime.utils.AssetLibrary in LimeAssetLibrary;
 import lime.utils.AssetManifest;
 import openfl.display.MovieClip;
 
-
 @:dox(hide) class AssetLibrary extends LimeAssetLibrary {
 	
 	
@@ -65,6 +64,31 @@ import openfl.display.MovieClip;
 		
 	}
 	
+
+    @:access(lime.utils.AssetLibrary)
+    public static function loadFromOFL (path:String, rootPath:String = null):Future<AssetLibrary> {
+		// Load OFL bytes
+        return lime.utils.Bytes.loadFromFile(path).then(function(bytes) {
+            // Load ZIP
+            var entries = new haxe.ds.StringMap<haxe.io.Bytes>();
+            var zipFile = new zip.ZipReader(bytes);
+            var entry:zip.ZipEntry;
+
+            while ( (entry = zipFile.getNextEntry()) != null ) {
+                entries.set(entry.fileName, zip.Zip.getBytes(entry));
+            }
+
+            // Load Manifest
+            return AssetManifest.loadFromBytes(entries.get('library.json'), rootPath).then(function(manifest) {
+                var library = fromManifest(manifest);
+
+                return library.loadFromMap(entries).then(function (library) {
+                    return Future.withValue(cast library);
+                });
+            });
+        });
+	}
+
 	
 	public static function loadFromFile (path:String, rootPath:String = null):Future<AssetLibrary> {
 		

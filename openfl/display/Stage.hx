@@ -1182,6 +1182,8 @@ class Stage extends DisplayObjectContainer implements IModule {
 		
 		if (!event.__preventDefault) {
 			
+            trace('Whut whut whut', e);
+
 			#if mobile
 			Log.println (CallStack.toString (CallStack.exceptionStack ()));
 			Log.println (Std.string (e));

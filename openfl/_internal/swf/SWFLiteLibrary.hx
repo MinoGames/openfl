@@ -1,6 +1,6 @@
 package openfl._internal.swf;
 
-
+import haxe.io.Bytes;
 import haxe.Unserializer;
 import lime.app.Future;
 import lime.app.Promise;
@@ -229,8 +229,71 @@ using StringTools;
 		
 	}
 	
+    var map:haxe.ds.StringMap<haxe.io.Bytes> = null;
+    public override function loadFromMap ( map:haxe.ds.StringMap<haxe.io.Bytes> ):Future<lime.utils.AssetLibrary> {
+		
+        this.map = map;
+
+		if (id != null) {
+			
+			preload.set (id, true);
+			
+		}
+		
+		var promise = new Promise<lime.utils.AssetLibrary> ();
+		preloading = true;
+		
+		var onComplete = function (data) {
+			
+			cachedText.set (id, data);
+			
+			swf = SWFLite.unserialize (data);
+			swf.library = this;
+			
+			var bitmapSymbol:BitmapSymbol;
+			
+			for (symbol in swf.symbols) {
+				
+				if (Std.is (symbol, BitmapSymbol)) {
+					
+					bitmapSymbol = cast symbol;
+					
+					if (bitmapSymbol.className != null) {
+						
+						imageClassNames.set (bitmapSymbol.className, bitmapSymbol.path);
+						
+					}
+					
+				}
+				
+			}
+			
+			SWFLite.instances.set (id, swf);
+			
+			__loadFromMap(map).onProgress (promise.progress).onError (promise.error).onComplete (function (_) {
+				
+				preloading = false;
+				promise.complete (this);
+				
+			});
+			
+		}
+		
+
+        for (id in paths.keys ()) {
+            
+            /*if (!id.endsWith('a.png'))*/ preload.set (id, true);
+            
+        }
+        
+        var path = (rootPath != null && rootPath != "") ? rootPath + "/" + id : id;
+        onComplete(map.get(path).toString());
+		
+		return promise.future;
+		
+	}
 	
-	public override function loadImage (id:String):Future<Image> {
+	public override function loadImage (id:String, bytes:Bytes = null):Future<Image> {
 		
 		if (imageClassNames.exists (id)) {
 			
@@ -242,6 +305,8 @@ using StringTools;
 		
 		if (#if (swf_preload || swflite_preload) true #else !preloading #end && !alphaCheck.exists (id)) {
 			
+            trace('--------------------------------------- !!!!!!!!!!!!!');
+
 			for (symbol in swf.symbols) {
 				
 				if (Std.is (symbol, BitmapSymbol) && cast (symbol, BitmapSymbol).path == id) {
@@ -252,9 +317,10 @@ using StringTools;
 						
 						var promise = new Promise<Image> ();
 						
-						__loadImage (id).onError (promise.error).onComplete (function (image) {
+						__loadImage (id, bytes).onError (promise.error).onComplete (function (image) {
 							
-							__loadImage (bitmapSymbol.alpha).onError (promise.error).onComplete (function (alpha) {
+                            trace(map == null);
+							__loadImage (bitmapSymbol.alpha, map == null ? null : map.get(bitmapSymbol.alpha)).onError (promise.error).onComplete (function (alpha) {
 								
 								__copyChannel (image, alpha);
 								
@@ -281,7 +347,7 @@ using StringTools;
 			
 		}
 		
-		return super.loadImage (id).onComplete (function (image) {
+		return super.loadImage (id, bytes).onComplete (function (image) {
 			if (scaleFactor != 1.0) image.resize(Math.ceil(image.width * scaleFactor), Math.ceil(image.height * scaleFactor));	
 		});
 
@@ -336,11 +402,17 @@ using StringTools;
 		return super.load ();
 		
 	}
-	
-	
-	private function __loadImage (id:String):Future<Image> {
+
+    private function __loadFromMap (map:haxe.ds.StringMap<haxe.io.Bytes>):Future<lime.utils.AssetLibrary> {
 		
-		return super.loadImage (id);
+		return super.loadFromMap (map);
+		
+	}
+	
+	
+	private function __loadImage (id:String, bytes:Bytes = null):Future<Image> {
+		
+		return super.loadImage (id, bytes);
 		
 	}
 	
