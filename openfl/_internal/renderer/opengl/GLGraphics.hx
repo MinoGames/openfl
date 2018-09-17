@@ -88,6 +88,10 @@ class GLGraphics {
 	
 	public static function render (graphics:Graphics, renderSession:RenderSession, parentTransform:Matrix, worldAlpha:Float):Void {
 		
+        #if openfl_disable_graphics
+        return;
+        #end
+
 		if (!isCompatible (graphics, parentTransform)) {
 			
 			#if (js && html5)

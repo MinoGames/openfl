@@ -44,7 +44,7 @@ class Window extends LimeWindow {
 			stage.__setLogicalSize (config.width, config.height);
 			
 		}
-		
+
 		application.addModule (stage);
 		
 		#else

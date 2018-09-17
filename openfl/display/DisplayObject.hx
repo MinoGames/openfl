@@ -1034,6 +1034,10 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	
 	private function set_filters (value:Array<BitmapFilter>):Array<BitmapFilter> {
 		
+        #if openfl_disable_filters
+        return value;
+        #end
+
 		if (value != null && value.length > 0) {
 			
 			__filters = value;
