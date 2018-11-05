@@ -32,6 +32,7 @@ import openfl.text.TextFormat;
 class CairoTextField {
 	
 	
+	static var nonBreakingSpaces:EReg = ~/ /g;
 	public static function render (textField:TextField, renderSession:RenderSession, transform:Matrix) {
 		
 		#if lime_cairo
@@ -181,6 +182,7 @@ class CairoTextField {
 			
 			var text = textEngine.text;
 			
+			text = nonBreakingSpaces.replace(text, ' ');
 			var scrollX = -textField.scrollH;
 			var scrollY = 0.0;
 			
