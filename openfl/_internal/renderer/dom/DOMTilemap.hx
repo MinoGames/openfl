@@ -18,7 +18,7 @@ class DOMTilemap {
 	
 	public static inline function render (tilemap:Tilemap, renderSession:RenderSession):Void {
 		
-		#if (js && html5)
+		/*#if (js && html5)
 		if (tilemap.stage != null && tilemap.__worldVisible && tilemap.__renderable && tilemap.__tiles.length > 0) {
 			
 			if (tilemap.__canvas == null) {
@@ -54,7 +54,7 @@ class DOMTilemap {
 			}
 			
 		}
-		#end
+		#end*/
 		
 	}
 	

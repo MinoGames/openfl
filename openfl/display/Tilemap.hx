@@ -27,8 +27,8 @@ import openfl._internal.renderer.opengl.GLTilemap;
 
 class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayObject #end {
 	
-	
-	public var numTiles (default, null):Int;
+	public var numTiles = 0;
+
 	public var tileset (default, set):Tileset;
 	
 	#if !flash
@@ -40,7 +40,8 @@ class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayO
 	private var __bufferData:Float32Array;
 	private var __cacheAlpha:Float;
 	private var __dirty:Bool;
-	private var __tiles:Array<Tile>;
+
+	private var __group:TileContainer;
 	
 	#if !flash
 	private var __height:Int;
@@ -55,8 +56,7 @@ class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayO
 		this.tileset = tileset;
 		this.smoothing = smoothing;
 		
-		__tiles = new Array ();
-		numTiles = 0;
+		__group = new TileContainer();
 		
 		#if !flash
 		__width = width;
@@ -72,9 +72,8 @@ class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayO
 	
 	public function addTile (tile:Tile):Tile {
 		
-		__tiles.push (tile);
+		__group.addTile(tile);
 		__dirty = true;
-		numTiles++;
 		
 		return tile;
 		
@@ -83,9 +82,8 @@ class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayO
 	
 	public function addTiles (tiles:Array<Tile>):Array<Tile> {
 		
-		__tiles = __tiles.concat (tiles);
+		__group.addTiles(tiles);
 		__dirty = true;
-		numTiles = __tiles.length;
 		
 		return tiles;
 		
@@ -94,10 +92,8 @@ class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayO
 	
 	public function addTileAt (tile:Tile, index:Int):Tile {
 		
-		__tiles.remove (tile);
-		__tiles.insert (index, tile);
+		__group.addTileAt(tile, index);
 		__dirty = true;
-		numTiles = __tiles.length;
 		
 		return tile;
 		
@@ -106,69 +102,42 @@ class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayO
 	
 	public function contains (tile:Tile):Bool {
 		
-		return (__tiles.indexOf (tile) > -1);
+		return __group.contains(tile);
 		
 	}
 	
 	
 	public function getTileAt (index:Int):Tile {
 		
-		if (index >= 0 && index < numTiles) {
-			
-			return __tiles[index];
-			
-		}
-		
-		return null;
+		return __group.getTileAt(index);
 		
 	}
 	
 	
 	public function getTileIndex (tile:Tile):Int {
 		
-		for (i in 0...__tiles.length) {
-			
-			if (__tiles[i] == tile) return i;
-			
-		}
-		
-		return -1;
+		return __group.getTileIndex(tile);
 		
 	}
 	
 	
 	public function removeTile (tile:Tile):Tile {
 		
-		__tiles.remove (tile);
-		__dirty = true;
-		numTiles = __tiles.length;
-		
-		return tile;
+		return __group.removeTile(tile);
 		
 	}
 	
 	
 	public function removeTileAt (index:Int):Tile {
-		
-		if (index >= 0 && index < numTiles) {
-			
-			return removeTile (__tiles[index]);
-			
-		}
-		
-		return null;
+
+		return __group.removeTileAt(index);
 		
 	}
 	
 	
 	public function removeTiles (beginIndex:Int = 0, endIndex:Int = 0x7fffffff):Void {
 		
-		if (beginIndex < 0) beginIndex = 0;
-		if (endIndex > __tiles.length - 1) endIndex = __tiles.length - 1;
-		
-		__tiles.splice (beginIndex, endIndex - beginIndex + 1);
-		__dirty = true;
-		numTiles = __tiles.length;
+		__group.removeTiles(beginIndex, endIndex);
 		
 	}
 	

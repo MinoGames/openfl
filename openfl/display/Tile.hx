@@ -1,6 +1,6 @@
 package openfl.display;
 
-
+import openfl.geom.Rectangle;
 import openfl.geom.Matrix;
 
 #if !openfl_debug
@@ -11,6 +11,8 @@ import openfl.geom.Matrix;
 
 class Tile {
 	
+	public var drawableTiles:Int = 0;
+	public var parent:TileContainer = null;
 	
 	public var alpha (default, set):Float;
 	public var data:Dynamic;
@@ -26,6 +28,7 @@ class Tile {
 	public var x (get, set):Float;
 	public var y (get, set):Float;
 	
+	private var __length:Int;
 	private var __alphaDirty:Bool;
 	private var __rotation:Null<Float>;
 	private var __rotationCosine:Float;
@@ -53,6 +56,7 @@ class Tile {
 		alpha = 1;
 		visible = true;
 		
+		__length = 0;
 		__alphaDirty = true;
 		__sourceDirty = true;
 		__transformDirty = true;
@@ -61,6 +65,12 @@ class Tile {
 	}
 	
 	
+	public function getBounds(targetCoordinateSpace:Tile):Rectangle {
+		// TODO: Rectangle!!
+		return new Rectangle();
+	}
+
+
 	public function clone ():Tile {
 		
 		var tile = new Tile (id);

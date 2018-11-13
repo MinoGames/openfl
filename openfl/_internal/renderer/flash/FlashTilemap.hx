@@ -25,7 +25,7 @@ class FlashTilemap {
 	
 	public static inline function render (tilemap:Tilemap):Void {
 		
-		#if flash
+		/*#if flash
 		if (tilemap.stage == null || !tilemap.visible || tilemap.alpha <= 0) return;
 		
 		var bitmapData = tilemap.bitmapData;
@@ -86,7 +86,7 @@ class FlashTilemap {
 		}
 		
 		bitmapData.unlock ();
-		#end
+		#end*/
 		
 	}
 	

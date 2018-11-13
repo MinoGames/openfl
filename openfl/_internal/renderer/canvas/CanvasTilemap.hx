@@ -20,7 +20,7 @@ class CanvasTilemap {
 	
 	public static inline function render (tilemap:Tilemap, renderSession:RenderSession):Void {
 		
-		#if (js && html5)
+		/*#if (js && html5)
 		
 		if (!tilemap.__renderable || tilemap.__tiles.length == 0 || tilemap.__worldAlpha <= 0) return;
 		
@@ -121,7 +121,7 @@ class CanvasTilemap {
 		renderSession.maskManager.popRect ();
 		renderSession.maskManager.popObject (tilemap);
 		
-		#end
+		#end*/
 		
 	}
 	

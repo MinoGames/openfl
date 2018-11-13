@@ -29,7 +29,7 @@ class CairoTilemap {
 	
 	public static inline function render (tilemap:Tilemap, renderSession:RenderSession):Void {
 		
-		if (!tilemap.__renderable || tilemap.__tiles.length == 0 || tilemap.__worldAlpha <= 0) return;
+		/*if (!tilemap.__renderable || tilemap.__tiles.length == 0 || tilemap.__worldAlpha <= 0) return;
 		
 		var cairo = renderSession.cairo;
 		
@@ -126,7 +126,7 @@ class CairoTilemap {
 		}
 		
 		renderSession.maskManager.popRect ();
-		renderSession.maskManager.popObject (tilemap);
+		renderSession.maskManager.popObject (tilemap);*/
 		
 	}
 	
