@@ -8,6 +8,8 @@ import openfl.geom.Matrix;
 @:noDebug
 #end
 
+@:access(openfl.geom.Matrix)
+@:access(openfl.geom.Rectangle)
 
 class Tile {
 	
@@ -64,10 +66,65 @@ class Tile {
 		
 	}
 	
+	function __findTileset() {
+		if (tileset != null) return tileset;
+		if (parent != null) return parent.__findTileset();
+		return null;
+	}
+
+	function __getWorldTransform():Matrix
+	{
+		var retval = matrix.clone();
+		if (parent != null)
+		{
+			retval.concat(parent.__getWorldTransform());
+		}
+		return retval;
+	}
+
+	public function getBounds (targetCoordinateSpace:Tile):Rectangle {
+		
+		var result:Rectangle;
+		
+		if (tileset == null) {
+			
+			var parentTileset = parent.__findTileset ();
+			if (parentTileset == null) return new Rectangle ();
+			result = parentTileset.getRect (id);
+			if (result == null) return new Rectangle ();
+			
+		} else {
+			
+			result = tileset.getRect (id);
+			
+		}
+
+		result.x = 0;
+		result.y = 0;
+
+		var matrix = new Matrix();
+		
+		if (targetCoordinateSpace != null && targetCoordinateSpace != this) {
+			
+			matrix.copyFrom (__getWorldTransform ());
+			
+			var targetMatrix = new Matrix ();
+			
+			targetMatrix.copyFrom (targetCoordinateSpace.__getWorldTransform ());
+			targetMatrix.invert ();
+			
+			matrix.concat (targetMatrix);
+			
+		} else {
+			
+			matrix.copyFrom (__getWorldTransform ());
+			
+		}
+		
+		result.__transform (result, matrix);
 	
-	public function getBounds(targetCoordinateSpace:Tile):Rectangle {
-		// TODO: Rectangle!!
-		return new Rectangle();
+		return result;
+		
 	}
 
 
