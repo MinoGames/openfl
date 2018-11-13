@@ -11,25 +11,14 @@ import openfl.geom.Matrix;
 @:access(openfl.geom.Matrix)
 @:access(openfl.geom.Rectangle)
 
+/**
+ * OpenFL 4+ compatible TileContainer
+ */
 class TileContainer extends Tile {
 	
 	public var numTiles (get, never):Int;
 	
 	@:noCompletion private var __tiles:Array<Tile>;
-	
-	
-	#if openfljs
-	@:noCompletion private static function __init__ () {
-		
-		untyped Object.defineProperty (TileContainer.prototype, "numTiles", { get: untyped __js__ ("function () { return this.get_numTiles (); }") });
-		
-	}
-	#end
-
-	function __setRenderDirty() {
-		// TODO: Do it!
-	}
-	
 	
 	public function new (x:Float = 0, y:Float = 0, scaleX:Float = 1, scaleY:Float = 1, rotation:Float = 0, originX:Float = 0, originY:Float = 0) {
 		
@@ -38,6 +27,11 @@ class TileContainer extends Tile {
 		__tiles = new Array ();
 		__length = 0;
 		
+	}
+
+
+	function __setRenderDirty() {
+		// TODO: Do it!
 	}
 	
 	
@@ -77,6 +71,7 @@ class TileContainer extends Tile {
 		return tile;
 		
 	}
+	
 
 	inline function addDrawableToParent(parent:TileContainer, n:Int) {
 		if (n != 0)  {

@@ -102,7 +102,12 @@ class GLTilemap {
 				
 			}
 
-			renderGroup(tilemap, bufferData, tilemap.__group, worldAlpha, alphaDirty, tilemap.visible, tiles);
+			//var parentTransform = Matrix.__pool.get ();
+			var parentTransform = new Matrix();
+
+			renderGroup(tilemap, bufferData, tilemap.__group, worldAlpha, alphaDirty, tilemap.visible, parentTransform, tiles);
+
+			//Matrix.__pool.release (parentTransform);
 		//}
 
 		tilemap.__bufferData = bufferData;
@@ -177,11 +182,12 @@ class GLTilemap {
 
 	#if test1
 
-	public static function renderGroup (tilemap:Tilemap, bufferData:Float32Array, group:TileContainer, worldAlpha:Float, alphaDirty:Bool, worldVisible:Bool, ?matrix:Matrix, tiles:Vector<Tile>, i:Int = 0, startIndex = 0) {
+	public static function renderGroup (tilemap:Tilemap, bufferData:Float32Array, group:TileContainer, worldAlpha:Float, alphaDirty:Bool, worldVisible:Bool, matrix:Matrix, tiles:Vector<Tile>, i:Int = 0, startIndex = 0) {
 		
 		if (group.__tiles.length == 0) return i;
 		
-		if (matrix == null) matrix = new Matrix();
+		//var tileTransform = Matrix.__pool.get ();
+		var tileTransform = new Matrix();
 
 		var tileset, tileData, tileMatrix, offset, alpha, visible, tileWidth, tileHeight;
 		var x, y, x2, y2, x3, y3, x4, y4, _i;
@@ -190,14 +196,15 @@ class GLTilemap {
 
 		for (tile in group.__tiles) {
 
+			// TODO: This is inneficient, keep a cache of the concat matrix in group
+			tileTransform.setTo (1, 0, 0, 1, -tile.originX, -tile.originY);
+			tileTransform.concat (tile.matrix);
+			tileTransform.concat (matrix);
+
 			if (tile.__length > 0) {
 
-				// TODO: This is inneficient, keep a cache of the concat matrix in group
-				var m = matrix.clone();
-				m.concat(tile.matrix);
-
 				// TODO: I hate this cast.... Might as well have all tile be "TileContainer"...
-				i = renderGroup(tilemap, bufferData, cast tile, worldAlpha * tile.alpha, alphaDirty, worldVisible && tile.visible, m, tiles, i, startIndex);
+				i = renderGroup(tilemap, bufferData, cast tile, worldAlpha * tile.alpha, alphaDirty, worldVisible && tile.visible, tileTransform, tiles, i, startIndex);
 
 			} else { //if (i >= startIndex) {
 
@@ -314,6 +321,8 @@ class GLTilemap {
 			}
 
 		}
+
+		//Matrix.__pool.release (tileTransform);
 
 		return i;
 
