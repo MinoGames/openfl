@@ -33,8 +33,6 @@ class GLTilemap {
 	private static var __skippedTiles = new Map<Int, Bool> ();
 	
 	public static function render (tilemap:Tilemap, renderSession:RenderSession):Void {
-		
-		#if test1
 
 		if (!tilemap.__renderable || tilemap.__worldAlpha <= 0 || tilemap.__group.drawableTiles == 0) return;
 
@@ -177,10 +175,7 @@ class GLTilemap {
 		renderSession.maskManager.popRect ();
 		renderSession.maskManager.popObject (tilemap);
 
-		#end
 	}
-
-	#if test1
 
 	public static function renderGroup (tilemap:Tilemap, bufferData:Float32Array, group:TileContainer, worldAlpha:Float, alphaDirty:Bool, worldVisible:Bool, matrix:Matrix, tiles:Vector<Tile>, i:Int = 0, startIndex = 0) {
 		
@@ -390,7 +385,5 @@ class GLTilemap {
 		tile.__sourceDirty = false;
 		
 	}
-	
-	#end
 	
 }
