@@ -152,7 +152,7 @@ class Tileset {
 			__uvHeight = (y + height) / bitmapData.height;
 			
 			#if flash
-			__bitmapData = new BitmapData (width, height);
+			__bitmapData = new BitmapData (width > 0 ? width : 1, height > 0 ? height : 1);
 			__bitmapData.copyPixels (bitmapData, new Rectangle (x, y, width, height), new Point ());
 			#end
 			

@@ -40,6 +40,120 @@ class Tile {
 	private var __sourceDirty:Bool;
 	private var __transform:Array<Float>;
 	private var __transformDirty:Bool;
+
+
+
+
+
+
+	/*var matA : Float;
+	var matB : Float;
+	var matC : Float;
+	var matD : Float;
+	var absX : Float;
+	var absY : Float;
+
+	var posChanged : Bool;
+	var allocated : Bool;
+	var lastFrame : Int;
+
+	function sync() {
+		var changed = posChanged;
+		if( changed ) {
+			calcAbsPos();
+			posChanged = false;
+		}
+
+		lastFrame = ctx.frame;
+		var p = 0, len = children.length;
+		while( p < len ) {
+			var c = children[p];
+			if( c == null )
+				break;
+			if( c.lastFrame != ctx.frame ) {
+				if( changed ) c.posChanged = true;
+				c.sync(ctx);
+			}
+			// if the object was removed, let's restart again.
+			// our lastFrame ensure that no object will get synched twice
+			if( children[p] != c ) {
+				p = 0;
+				len = children.length;
+			} else
+				p++;
+		}
+	}
+
+	function syncPos() {
+		if( parent != null ) parent.syncPos();
+		if( posChanged ) {
+			calcAbsPos();
+			for( c in children )
+				c.posChanged = true;
+			posChanged = false;
+		}
+	}
+
+	function calcAbsPos() {
+		if( parent == null ) {
+			var cr, sr;
+			if( rotation == 0 ) {
+				cr = 1.; sr = 0.;
+				matA = scaleX;
+				matB = 0;
+				matC = 0;
+				matD = scaleY;
+			} else {
+				cr = Math.cos(rotation);
+				sr = Math.sin(rotation);
+				matA = scaleX * cr;
+				matB = scaleX * sr;
+				matC = scaleY * -sr;
+				matD = scaleY * cr;
+			}
+			absX = x;
+			absY = y;
+		} else {
+			// M(rel) = S . R . T
+			// M(abs) = M(rel) . P(abs)
+			if( rotation == 0 ) {
+				matA = scaleX * parent.matA;
+				matB = scaleX * parent.matB;
+				matC = scaleY * parent.matC;
+				matD = scaleY * parent.matD;
+			} else {
+				var cr = Math.cos(rotation);
+				var sr = Math.sin(rotation);
+				var tmpA = scaleX * cr;
+				var tmpB = scaleX * sr;
+				var tmpC = scaleY * -sr;
+				var tmpD = scaleY * cr;
+				matA = tmpA * parent.matA + tmpB * parent.matC;
+				matB = tmpA * parent.matB + tmpB * parent.matD;
+				matC = tmpC * parent.matA + tmpD * parent.matC;
+				matD = tmpC * parent.matB + tmpD * parent.matD;
+			}
+			absX = x * parent.matA + y * parent.matC + parent.absX;
+			absY = x * parent.matB + y * parent.matD + parent.absY;
+		}
+	}*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	
 	
 	public function new (id:Int = 0, x:Float = 0, y:Float = 0, scaleX:Float = 1, scaleY:Float = 1, rotation:Float = 0, originX:Float = 0, originY:Float = 0) {
