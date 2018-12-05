@@ -46,7 +46,7 @@ import js.html.Element;
 @:access(openfl.geom.Matrix)
 @:access(openfl.geom.Rectangle)
 
-
+@:keep
 class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openfl_dynamic implements Dynamic<DisplayObject> #end {
 	
 	
@@ -117,7 +117,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	private var __worldClip:Rectangle;
 	private var __worldClipChanged:Bool;
 	private var __worldColorTransform:ColorTransform;
-	private var __worldTransform:Matrix;
+	@:keep private var __worldTransform:Matrix;
 	private var __worldVisible:Bool;
 	private var __worldVisibleChanged:Bool;
 	private var __worldZ:Int;
@@ -495,7 +495,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	}
 	
 	
-	private function __getBounds (rect:Rectangle, matrix:Matrix):Void {
+	@:keep private function __getBounds (rect:Rectangle, matrix:Matrix):Void {
 		
 		if (__graphics != null) {
 			
@@ -560,7 +560,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	}
 	
 	
-	private function __getWorldTransform ():Matrix {
+	@:keep private function __getWorldTransform ():Matrix {
 		
 		if (__transformDirty || __worldTransformDirty > 0) {
 			
