@@ -12,9 +12,9 @@ import openfl.display.MovieClip;
 
 @:access(openfl.display.MovieClip)
 
-
+#if !macro
 class SpriteSymbol extends SWFSymbol {
-	
+
 	
 	public var frames:Array<Frame>;
 	
@@ -54,10 +54,11 @@ class SpriteSymbol extends SWFSymbol {
 		}
 		
 		movieClip.__fromSymbol(swf, this);
-		
+
 		return movieClip;
 		
 	}
 	
 	
 }
+#end

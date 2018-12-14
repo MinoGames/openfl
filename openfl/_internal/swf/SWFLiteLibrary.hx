@@ -33,6 +33,7 @@ using StringTools;
 @:noDebug
 #end
 
+#if !macro
 @:keep class SWFLiteLibrary extends AssetLibrary {
 	
 	
@@ -346,3 +347,5 @@ using StringTools;
 	
 	
 }
+
+#end

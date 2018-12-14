@@ -15,7 +15,7 @@ import openfl.Assets;
 @:noDebug
 #end
 
-
+#if !macro
 class BitmapSymbol extends SWFSymbol {
 	
 	
@@ -50,3 +50,4 @@ class BitmapSymbol extends SWFSymbol {
 	
 	
 }
+#end
