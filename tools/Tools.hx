@@ -297,6 +297,8 @@ class Tools {
 					targetPath = PathHelper.tryFullPath (targetDirectory) + "/haxe/_generated";
 					
 				}
+
+				PathHelper.mkdir (targetPath);
 				
 				var templateFile = new Asset ("", PathHelper.combine (targetPath, Path.directory (className.split (".").join ("/"))) + "/" + prefix + name + ".hx", AssetType.TEMPLATE);
 				templateFile.data = template.execute (context);
@@ -429,6 +431,8 @@ class Tools {
 					targetPath = PathHelper.tryFullPath (targetDirectory) + "/haxe/_generated";
 					
 				}
+
+				PathHelper.mkdir (targetPath);
 				
 				var templateFile = new Asset ("", PathHelper.combine (targetPath, Path.directory (symbol.className.split (".").join ("/"))) + "/" + name + ".hx", AssetType.TEMPLATE);
 				templateFile.data = template.execute (context);
@@ -1072,6 +1076,8 @@ class Tools {
 				generatedPath = PathHelper.combine (targetDirectory, "haxe/_generated");
 				
 			}
+
+			PathHelper.mkdir (generatedPath);
 			
 			output.sources.push (generatedPath);
 			
