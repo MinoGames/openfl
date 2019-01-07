@@ -1,0 +1,5 @@
+-D lime=4.1.0
+# @install: lix --submodules --silent download "git:git@github.com:MinoGames/lime#b8504db73b907e4e5b765ff42f54bb85926b1722" into lime/4.1.0/git/b8504db73b907e4e5b765ff42f54bb85926b1722
+# @run: haxelib run-dir lime ${HAXE_LIBCACHE}/lime/4.1.0/git/b8504db73b907e4e5b765ff42f54bb85926b1722
+-cp ${HAXE_LIBCACHE}/lime/4.1.0/git/b8504db73b907e4e5b765ff42f54bb85926b1722/
+--macro lime.Lib.extraParams()

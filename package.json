@@ -1,0 +1,11 @@
+{
+  "name": "openfl",
+  "private": true,
+  "dependencies": {
+    "lix": "^15.3.4"
+  },
+  "scripts": {
+    "preinstall": "mkdir -p ~/haxe",
+    "postinstall": "mkdir -p haxe_libraries; lix download;"
+  }
+}
