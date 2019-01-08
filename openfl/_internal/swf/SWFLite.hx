@@ -20,7 +20,7 @@ import openfl.Assets;
 
 @:access(openfl._internal.symbols.SWFSymbol)
 
-#if !macro
+
 @:keep class SWFLite {
 	
 	
@@ -198,5 +198,3 @@ import openfl.Assets;
 	
 	
 }
-
-#end

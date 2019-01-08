@@ -9,7 +9,7 @@ import openfl.display.DisplayObject;
 @:noDebug
 #end
 
-#if !macro
+
 @:keepSub class SWFSymbol {
 	
 	
@@ -32,4 +32,3 @@ import openfl.display.DisplayObject;
 	
 	
 }
-#end
