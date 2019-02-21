@@ -89,14 +89,14 @@
     "brotli-webpack-plugin": "^1.0.0",
     "chai": "^4.1.2",
     "compression-webpack-plugin": "^1.1.12",
-    "format": "jgranick/format",
+    "format": "starburst997/format#master",
     "globby": "^8.0.1",
     "haxe": "^5.0.10",
-    "hxgenjs": "kevinresol/hxgenjs",
-    "hxnodejs": "jgranick/hxnodejs",
-    "hxp": "openfl/hxp",
+    "hxgenjs": "starburst997/hxgenjs",
+    "hxnodejs": "starburst997/hxnodejs",
+    "hxp": "minogames/hxp",
     "jpeg-js": "^0.3.4",
-    "lime": "openfl/lime#develop",
+    "lime": "minogames/lime#latest",
     "mocha": "^5.2.0",
     "mocha-chrome": "^1.1.0",
     "typedoc": "^0.11.1",
@@ -110,6 +110,7 @@
   "dependencies": {
     "file-saver": "^1.3.8",
     "howler": "^2.0.15",
+    "lix": "starburst997/lix.client#develop",
     "pako": "^1.0.6"
   },
   "haxeDependencies": {
