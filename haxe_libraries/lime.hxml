@@ -1,0 +1,5 @@
+-D lime=7.2.1
+# @install: lix --submodules --silent download "git:git@github.com:minogames/lime#3dbe4a7b1047a4c8fde51c19b9631de99e41c654" into lime/7.2.1/git/3dbe4a7b1047a4c8fde51c19b9631de99e41c654
+# @run: haxelib run-dir lime ${HAXE_LIBCACHE}/lime/7.2.1/git/3dbe4a7b1047a4c8fde51c19b9631de99e41c654
+-cp ${HAXE_LIBCACHE}/lime/7.2.1/git/3dbe4a7b1047a4c8fde51c19b9631de99e41c654/src
+--macro lime._internal.macros.DefineMacro.run()

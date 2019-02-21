@@ -1,0 +1,4 @@
+-D hxp=1.1.0
+# @install: lix --silent download "gh://github.com/minogames/hxp#4d27f67e6ba4cb42c7731ceaf2736b8000b631f5" into hxp/1.1.0/github/4d27f67e6ba4cb42c7731ceaf2736b8000b631f5
+# @run: haxelib run-dir hxp ${HAXE_LIBCACHE}/hxp/1.1.0/github/4d27f67e6ba4cb42c7731ceaf2736b8000b631f5
+-cp ${HAXE_LIBCACHE}/hxp/1.1.0/github/4d27f67e6ba4cb42c7731ceaf2736b8000b631f5/src

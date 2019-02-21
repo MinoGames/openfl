@@ -1,0 +1,3 @@
+-D format=3.4.2
+# @install: lix --silent download "gh://github.com/minogames/format#26eb57e0c5d86244e3b9d5922f83766b19b6a0fd" into format/3.4.2/github/26eb57e0c5d86244e3b9d5922f83766b19b6a0fd
+-cp ${HAXE_LIBCACHE}/format/3.4.2/github/26eb57e0c5d86244e3b9d5922f83766b19b6a0fd/
