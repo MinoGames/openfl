@@ -91,7 +91,7 @@ class CairoTextField {
 		
 		if (cairo == null) {
 			
-			var bitmap = new BitmapData (width, height, true, 0);
+			var bitmap = new BitmapData (width + 10, height, true, 0);
 			var surface = bitmap.getSurface ();
 			graphics.__cairo = new Cairo (surface);
 			graphics.__visible = true;
