@@ -998,7 +998,6 @@ class Stage extends DisplayObjectContainer implements IModule {
 			
 			__broadcastEvent (new Event (Event.ENTER_FRAME));
 			__broadcastEvent (new Event (Event.FRAME_CONSTRUCTED));
-			__broadcastEvent (new Event (Event.EXIT_FRAME));
 			
 			if (__invalidated) {
 				
@@ -1015,6 +1014,9 @@ class Stage extends DisplayObjectContainer implements IModule {
 			__renderable = true;
 			
 			__enterFrame (__deltaTime);
+			
+			__broadcastEvent (new Event (Event.EXIT_FRAME));
+			
 			__deltaTime = 0;
 			__update (false, true);
 			
@@ -1040,6 +1042,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 				__renderer.render ();
 				
 			}
+			
 			
 			#if hxtelemetry
 			Telemetry.__endTiming (TelemetryCommandName.RENDER);
