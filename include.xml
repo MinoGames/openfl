@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension>
 	
+	<haxedef name="openfl_jd" />
+	<haxedef name="openfl_jd2" />
+
 	<haxedef name="native" if="cpp || neko" />
 	<set name="native" if="cpp || neko" />
 	
