@@ -1,5 +1,6 @@
 package openfl.display;
 
+import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.geom.Matrix;
 
@@ -177,6 +178,94 @@ class TileContainer extends Tile {
 		
 		return result;
 		
+	}
+
+	public function globalToLocal(pos:Point):Point {
+
+		pos = pos.clone ();
+
+		#if flash
+
+		function __transformInversePoint(matrix:Matrix, point:Point):Void {
+			var norm = matrix.a * matrix.d - matrix.b * matrix.c;
+			
+			if (norm == 0) {
+				point.x = -matrix.tx;
+				point.y = -matrix.ty;
+			} else {
+				var px = (1.0 / norm) * (matrix.c * (matrix.ty - point.y) + matrix.d * (point.x - matrix.tx));
+				point.y = (1.0 / norm) * ( matrix.a * (point.y - matrix.ty) + matrix.b * (matrix.tx - point.x) );
+				point.x = px;
+			}
+		}
+
+		__transformInversePoint(__getWorldTransform(), pos);
+
+		#else
+		
+		__getWorldTransform().__transformInversePoint(pos);
+		
+		#end
+
+		return pos;
+
+	}
+
+	public function localToGlobal(point:Point):Point {
+
+		return __getWorldTransform().transformPoint(point);
+
+		/*var result:Rectangle = new Rectangle(0, 0, 1, 1);
+
+		result.x = x;
+		result.y = y;
+
+		var matrix = new Matrix();
+		
+		matrix.copyFrom (__getWorldTransform ());
+
+		#if flash
+		function __transform (rect:Rectangle, m:Matrix):Void {
+			
+			var tx0 = m.a * rect.x + m.c * rect.y;
+			var tx1 = tx0;
+			var ty0 = m.b * rect.x + m.d * rect.y;
+			var ty1 = ty0;
+			
+			var tx = m.a * (rect.x + rect.width) + m.c * rect.y;
+			var ty = m.b * (rect.x + rect.width) + m.d * rect.y;
+			
+			if (tx < tx0) tx0 = tx;
+			if (ty < ty0) ty0 = ty;
+			if (tx > tx1) tx1 = tx;
+			if (ty > ty1) ty1 = ty;
+			
+			tx = m.a * (rect.x + rect.width) + m.c * (rect.y + rect.height);
+			ty = m.b * (rect.x + rect.width) + m.d * (rect.y + rect.height);
+			
+			if (tx < tx0) tx0 = tx;
+			if (ty < ty0) ty0 = ty;
+			if (tx > tx1) tx1 = tx;
+			if (ty > ty1) ty1 = ty;
+			
+			tx = m.a * rect.x + m.c * (rect.y + rect.height);
+			ty = m.b * rect.x + m.d * (rect.y + rect.height);
+			
+			if (tx < tx0) tx0 = tx;
+			if (ty < ty0) ty0 = ty;
+			if (tx > tx1) tx1 = tx;
+			if (ty > ty1) ty1 = ty;
+			
+			rect.setTo (tx0 + m.tx, ty0 + m.ty, tx1 - tx0, ty1 - ty0);
+			
+		}
+		__transform (result, matrix);
+		#else
+		result.__transform (result, matrix);
+		#end
+	
+		return new Point(result.x, result.y);*/
+
 	}
 	
 	
