@@ -27,7 +27,10 @@ import openfl._internal.renderer.opengl.GLTilemap;
 
 class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayObject #end {
 	
-	public var numTiles = 0;
+	public var numTiles(get, never):Int;
+	inline function get_numTiles() {
+		return __group.numTiles;
+	}
 
 	public var tileset (default, set):Tileset;
 	
@@ -212,7 +215,6 @@ class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayO
 	
 	
 	private function __renderFlash ():Void {
-		
 		FlashTilemap.render (this);
 		
 	}
