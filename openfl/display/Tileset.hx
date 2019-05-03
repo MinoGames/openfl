@@ -80,6 +80,19 @@ class Tileset {
 		return null;
 		
 	}
+
+	public function updateRect(id:Int, x:Int, y:Int, width:Int, height:Int) {
+		if (id < __data.length && id >= 0) {
+			
+			var data = __data[id];
+			data.x = x;
+			data.y = y;
+			data.width = width;
+			data.height = height;
+
+			data.__update(bitmapData);
+		}
+	}
 	
 	
 	
