@@ -311,8 +311,9 @@ class Tile {
 	
 	
 	private function set_id (value:Int):Int {
-		
-		__sourceDirty = true;
+		//if (value != id) {
+			__sourceDirty = true;
+		//}
 		return id = value;
 		
 	}
