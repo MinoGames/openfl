@@ -25,7 +25,7 @@ class Tile {
 	public var rotation (get, set):Float;
 	public var scaleX (get, set):Float;
 	public var scaleY (get, set):Float;
-	public var tileset (default, set):Tileset;
+	@:isVar public var tileset (get, set):Tileset;
 	public var visible:Bool;
 	public var x (get, set):Float;
 	public var y (get, set):Float;
@@ -41,7 +41,12 @@ class Tile {
 	private var __transform:Array<Float>;
 	private var __transformDirty:Bool;
 
-
+	function get_tileset():Tileset {
+		if (tileset == null && parent != null) {
+			tileset = parent.__findTileset ();
+		}
+		return tileset;
+	}
 
 
 

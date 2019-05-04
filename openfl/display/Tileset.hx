@@ -81,6 +81,18 @@ class Tileset {
 		
 	}
 
+	public function getData (id:Int):TileData {
+		
+		if (id < __data.length && id >= 0) {
+			
+			return __data[id];
+			
+		}
+		
+		return null;
+		
+	}
+
 	public function updateRect(id:Int, x:Int, y:Int, width:Int, height:Int) {
 		if (id < __data.length && id >= 0) {
 			

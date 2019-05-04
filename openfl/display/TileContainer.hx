@@ -163,7 +163,7 @@ class TileContainer extends Tile {
 		var result = new Rectangle ();
 		var rect = null;
 		
-		for (tile in __tiles) if (tile.visible) {
+		for (tile in __tiles) /*if (tile.visible)*/ {
 			
 			// TODO: Generate less Rectangle objects?
 			rect = tile.getBounds (targetCoordinateSpace);
