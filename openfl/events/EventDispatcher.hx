@@ -379,6 +379,8 @@ private class Listener {
 	
 	public function match (callback:Dynamic->Void, useCapture:Bool) {
 		
+		if (callback == null || this.callback == null) return false;
+
 		return (Reflect.compareMethods (this.callback, callback) && this.useCapture == useCapture);
 		
 	}
