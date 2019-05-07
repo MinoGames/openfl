@@ -194,8 +194,8 @@ class Tile {
 	var tempMatrix:Matrix = null;
 	function __getWorldTransform():Matrix
 	{
-		/*if (tempMatrix == null)*/ tempMatrix = new Matrix();
-		tempMatrix.identity();
+		if (tempMatrix == null) tempMatrix = new Matrix();
+		tempMatrix.copyFrom(matrix);
 
 		var retval = tempMatrix;
 		if (parent != null)
@@ -210,7 +210,7 @@ class Tile {
 	var tempMatrix2:Matrix = null;
 	public function getBounds (targetCoordinateSpace:Tile):Rectangle {
 		
-		/*if (tempRectangle == null)*/ tempRectangle = new Rectangle();
+		if (tempRectangle == null) tempRectangle = new Rectangle();
 		tempRectangle.setTo(0, 0, 0, 0);
 
 		var result:Rectangle;
@@ -233,7 +233,7 @@ class Tile {
 		result.x = 0;
 		result.y = 0;
 
-		/*if (tempMatrix1 == null)*/ tempMatrix1 = new Matrix();
+		if (tempMatrix1 == null) tempMatrix1 = new Matrix();
 		tempMatrix1.identity();
 
 		var matrix = tempMatrix1;
@@ -242,7 +242,7 @@ class Tile {
 			
 			matrix.copyFrom (__getWorldTransform ());
 			
-			/*if (tempMatrix2 == null)*/ tempMatrix2 = new Matrix();
+			if (tempMatrix2 == null) tempMatrix2 = new Matrix();
 			tempMatrix2.identity();
 
 			var targetMatrix = tempMatrix2;

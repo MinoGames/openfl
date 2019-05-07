@@ -161,7 +161,7 @@ class TileContainer extends Tile {
 	var tempRect:Rectangle = null;
 	public override function getBounds (targetCoordinateSpace:Tile):Rectangle {
 		
-		/*if (tempRect == null)*/ tempRect = new Rectangle();
+		if (tempRect == null) tempRect = new Rectangle();
 
 		var result = tempRect;
 		var rect = null;
