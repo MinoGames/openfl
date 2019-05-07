@@ -211,7 +211,7 @@ class Tile {
 	public function getBounds (targetCoordinateSpace:Tile):Rectangle {
 		
 		if (tempRectangle == null) tempRectangle = new Rectangle();
-		tempRectangle.setTo(0, 0, 0, 0);
+		tempRectangle.setTo(0, 0, 1, 1);
 
 		var result:Rectangle;
 		
