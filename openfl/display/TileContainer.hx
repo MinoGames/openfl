@@ -158,9 +158,12 @@ class TileContainer extends Tile {
 	 * @param targetCoordinateSpace The tile that works as a coordinate system.
 	 * @return Rectangle The bounding box. If no box found, this will return {0,0,0,0} rectangle instead of null.
 	 */
+	var tempRect:Rectangle = null;
 	public override function getBounds (targetCoordinateSpace:Tile):Rectangle {
 		
-		var result = new Rectangle ();
+		/*if (tempRect == null)*/ tempRect = new Rectangle();
+
+		var result = tempRect;
 		var rect = null;
 		
 		for (tile in __tiles) /*if (tile.visible)*/ {
@@ -180,7 +183,7 @@ class TileContainer extends Tile {
 		
 	}
 
-	public function globalToLocal(pos:Point):Point {
+	/*public function globalToLocal(pos:Point):Point {
 
 		pos = pos.clone ();
 
@@ -209,11 +212,11 @@ class TileContainer extends Tile {
 
 		return pos;
 
-	}
+	}*/
 
-	public function localToGlobal(point:Point):Point {
+	//public function localToGlobal(point:Point):Point {
 
-		return __getWorldTransform().transformPoint(point);
+		//return __getWorldTransform().transformPoint(point);
 
 		/*var result:Rectangle = new Rectangle(0, 0, 1, 1);
 
@@ -266,7 +269,7 @@ class TileContainer extends Tile {
 	
 		return new Point(result.x, result.y);*/
 
-	}
+	//}
 	
 	
 	public function getTileAt (index:Int):Tile {
