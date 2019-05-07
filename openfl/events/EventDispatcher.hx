@@ -240,6 +240,8 @@ class EventDispatcher implements IEventDispatcher {
 	
 	private static function __sortByPriority (l1:Listener, l2:Listener):Int {
 		
+		if (l1 == null || l2 == null) return 0;
+
 		return l1.priority == l2.priority ? 0 : (l1.priority > l2.priority ? -1 : 1);
 		
 	}
