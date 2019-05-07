@@ -72,15 +72,21 @@ class Tileset {
 	var tempRect:Rectangle;
 	public function getRect (id:Int, ?temp:Rectangle):Rectangle {
 		
+		#if use_temp
 		if (temp == null) {
 			if (tempRect == null) tempRect = new Rectangle();
 			temp = tempRect;
 		}
+		#end
 
 		if (id < __data.length && id >= 0) {
 			
+			#if use_temp
 			temp.setTo(__data[id].x, __data[id].y, __data[id].width, __data[id].height);
 			return temp;
+			#else
+			return new Rectangle (__data[id].x, __data[id].y, __data[id].width, __data[id].height);
+			#end
 			
 		}
 		

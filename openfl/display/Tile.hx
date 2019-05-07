@@ -194,10 +194,14 @@ class Tile {
 	var tempMatrix:Matrix = null;
 	function __getWorldTransform():Matrix
 	{
+		#if use_temp
 		if (tempMatrix == null) tempMatrix = new Matrix();
 		tempMatrix.copyFrom(matrix);
-
 		var retval = tempMatrix;
+		#else
+		var retval = matrix.clone();
+		#end
+
 		if (parent != null)
 		{
 			retval.concat(parent.__getWorldTransform());
@@ -210,42 +214,62 @@ class Tile {
 	var tempMatrix2:Matrix = null;
 	public function getBounds (targetCoordinateSpace:Tile):Rectangle {
 		
+		#if use_temp
 		if (tempRectangle == null) tempRectangle = new Rectangle();
 		tempRectangle.setTo(0, 0, 1, 1);
+		#end
 
 		var result:Rectangle;
 		
 		if (tileset == null) {
 			
 			var parentTileset = parent.__findTileset ();
+			#if use_temp
 			if (parentTileset == null) return tempRectangle;
 			result = parentTileset.getRect (id, tempRectangle);
 			if (result == null) return tempRectangle;
+			#else
+			if (parentTileset == null) return new Rectangle ();
+			result = parentTileset.getRect (id);
+			if (result == null) return new Rectangle ();
+			#end
 
 			tileset = parentTileset;
 			
 		} else {
 			
+			#if use_temp
 			result = tileset.getRect (id, tempRectangle);
+			#else
+			result = tileset.getRect (id);
+			#end
 			
 		}
 
 		result.x = 0;
 		result.y = 0;
 
+		#if use_temp
 		if (tempMatrix1 == null) tempMatrix1 = new Matrix();
 		tempMatrix1.identity();
 
 		var matrix = tempMatrix1;
+		#else
+		var matrix = new Matrix();
+		#end
 		
 		if (targetCoordinateSpace != null && targetCoordinateSpace != this) {
 			
 			matrix.copyFrom (__getWorldTransform ());
 			
+			#if use_temp
 			if (tempMatrix2 == null) tempMatrix2 = new Matrix();
 			tempMatrix2.identity();
 
 			var targetMatrix = tempMatrix2;
+			#else
+			var targetMatrix = new Matrix ();
+			#end
 			
 			targetMatrix.copyFrom (targetCoordinateSpace.__getWorldTransform ());
 			targetMatrix.invert ();
