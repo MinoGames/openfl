@@ -159,8 +159,6 @@ class Tile {
 
 
 
-	
-	
 	public function new (id:Int = 0, x:Float = 0, y:Float = 0, scaleX:Float = 1, scaleY:Float = 1, rotation:Float = 0, originX:Float = 0, originY:Float = 0) {
 		
 		this.id = id;
@@ -185,42 +183,62 @@ class Tile {
 		
 	}
 	
-	function __findTileset() {
-		if (tileset != null) return tileset;
-		if (parent != null) return parent.__findTileset();
-		return null;
+	inline function __findTileset() {
+		return if (tileset != null) {
+			tileset;
+		} else if (parent != null) {
+			var tileset = parent.__findTileset();
+			this.tileset = tileset;
+			tileset;
+		} else {
+			null;
+		}
 	}
 
 	var tempMatrix:Matrix = null;
-	function __getWorldTransform():Matrix
+	
+	var transformId = -1;
+	var tempTransform:Matrix = null;
+	inline function __getWorldTransform():Matrix
 	{
-		#if use_temp
-		if (tempMatrix == null) tempMatrix = new Matrix();
-		tempMatrix.copyFrom(matrix);
-		var retval = tempMatrix;
-		#else
-		var retval = matrix.clone();
-		#end
+		var tileset = __findTileset();
+		return if (tileset != null && tileset.renderId == transformId && tempTransform != null) {
+			tempTransform;
+		} else {
+			if (tileset != null) transformId = tileset.renderId;
 
-		if (parent != null)
-		{
-			retval.concat(parent.__getWorldTransform());
+			#if use_temp
+			if (tempMatrix == null) tempMatrix = new Matrix();
+			tempMatrix.copyFrom(matrix);
+			var retval = tempMatrix;
+			#else
+			var retval = matrix.clone();
+			#end
+
+			if (parent != null)
+			{
+				retval.concat(parent.__getWorldTransform());
+			}
+
+			if (tempTransform == null) tempTransform = new Matrix();
+			tempTransform.copyFrom(retval);
+
+			retval;
 		}
-		return retval;
 	}
 
 	var tempRectangle:Rectangle = null;
 	var tempMatrix1:Matrix = null;
 	var tempMatrix2:Matrix = null;
 	public function getBounds (targetCoordinateSpace:Tile):Rectangle {
-		
+
 		#if use_temp
 		if (tempRectangle == null) tempRectangle = new Rectangle();
 		tempRectangle.setTo(0, 0, 1, 1);
 		#end
 
 		var result:Rectangle;
-		
+
 		if (tileset == null) {
 			
 			var parentTileset = parent.__findTileset ();
@@ -283,7 +301,7 @@ class Tile {
 		}
 		
 		#if flash
-		function __transform (rect:Rectangle, m:Matrix):Void {
+		inline function __transform (rect:Rectangle, m:Matrix):Void {
 			
 			var tx0 = m.a * rect.x + m.c * rect.y;
 			var tx1 = tx0;
@@ -569,7 +587,7 @@ class Tile {
 	
 	private function set_x (value:Float):Float {
 		
-		__transformDirty = true;
+		__transformDirty = matrix.tx != value;
 		return matrix.tx = value;
 		
 	}
@@ -577,7 +595,7 @@ class Tile {
 	
 	private function set_y (value:Float):Float {
 		
-		__transformDirty = true;
+		__transformDirty = matrix.ty != value;
 		return matrix.ty = value;
 		
 	}

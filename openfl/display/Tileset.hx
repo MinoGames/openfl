@@ -12,7 +12,8 @@ import openfl.geom.Rectangle;
 
 class Tileset {
 	
-	
+	public var renderId = -1;
+
 	public var bitmapData (default, set):BitmapData;
 	
 	private var __data:Array<TileData>;
@@ -70,7 +71,7 @@ class Tileset {
 	
 	
 	var tempRect:Rectangle;
-	public function getRect (id:Int, ?temp:Rectangle):Rectangle {
+	public inline function getRect (id:Int, ?temp:Rectangle):Rectangle {
 		
 		#if use_temp
 		if (temp == null) {
@@ -79,30 +80,32 @@ class Tileset {
 		}
 		#end
 
-		if (id < __data.length && id >= 0) {
+		return if (id < __data.length && id >= 0) {
 			
 			#if use_temp
 			temp.setTo(__data[id].x, __data[id].y, __data[id].width, __data[id].height);
-			return temp;
+			temp;
 			#else
-			return new Rectangle (__data[id].x, __data[id].y, __data[id].width, __data[id].height);
+			new Rectangle (__data[id].x, __data[id].y, __data[id].width, __data[id].height);
 			#end
 			
+		} else {
+			null;
 		}
-		
-		return null;
 		
 	}
 
-	public function getData (id:Int):TileData {
+	public inline function getData (id:Int):TileData {
 		
-		if (id < __data.length && id >= 0) {
+		return if (id < __data.length && id >= 0) {
 			
-			return __data[id];
+			__data[id];
 			
+		} else {
+
+			null;
+
 		}
-		
-		return null;
 		
 	}
 

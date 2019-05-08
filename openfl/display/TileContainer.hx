@@ -163,6 +163,7 @@ class TileContainer extends Tile {
 		
 		#if use_temp
 		if (tempRect == null) tempRect = new Rectangle();
+		tempRect.setTo(0, 0, 0, 0);
 		var result = tempRect;
 		#else
 		var result = new Rectangle ();
@@ -172,17 +173,46 @@ class TileContainer extends Tile {
 		
 		for (tile in __tiles) /*if (tile.visible)*/ {
 			
-			// TODO: Generate less Rectangle objects?
 			rect = tile.getBounds (targetCoordinateSpace);
 			
 			#if flash
-			result = result.union (rect);
+			inline function __expand (rect:Rectangle, x:Float, y:Float, width:Float, height:Float):Void {
+		
+				if (rect.width == 0 && rect.height == 0) {
+					
+					rect.x = x;
+					rect.y = y;
+					rect.width = width;
+					rect.height = height;
+					
+				} else {
+					var cacheRight = rect.right;
+					var cacheBottom = rect.bottom;
+					
+					if (rect.x > x)
+					{
+						rect.x = x;
+						rect.width = cacheRight - x;
+					}
+					if (rect.y > y)
+					{
+						rect.y = y;
+						rect.height = cacheBottom - y;
+					}
+					if (cacheRight < x + width) rect.width = x + width - rect.x;
+					if (cacheBottom < y + height) rect.height = y + height - rect.y;
+				}
+				
+			}
+
+			__expand (result, rect.x, rect.y, rect.width, rect.height);
+
 			#else
 			result.__expand (rect.x, rect.y, rect.width, rect.height);
 			#end
 			
 		}
-		
+			
 		return result;
 		
 	}

@@ -181,7 +181,7 @@ class Rectangle {
 	}
 	
 	
-	public function setTo (xa:Float, ya:Float, widtha:Float, heighta:Float):Void {
+	public inline function setTo (xa:Float, ya:Float, widtha:Float, heighta:Float):Void {
 		
 		x = xa;
 		y = ya;
@@ -246,7 +246,7 @@ class Rectangle {
 	}
 	
 	
-	public function __expand (x:Float, y:Float, width:Float, height:Float):Void {
+	public inline function __expand (x:Float, y:Float, width:Float, height:Float):Void {
 		
 		if (this.width == 0 && this.height == 0) {
 			
@@ -254,25 +254,24 @@ class Rectangle {
 			this.y = y;
 			this.width = width;
 			this.height = height;
-			return;
 			
+		} else {
+			var cacheRight = right;
+			var cacheBottom = bottom;
+			
+			if (this.x > x)
+			{
+				this.x = x;
+				this.width = cacheRight - x;
+			}
+			if (this.y > y)
+			{
+				this.y = y;
+				this.height = cacheBottom - y;
+			}
+			if (cacheRight < x + width) this.width = x + width - this.x;
+			if (cacheBottom < y + height) this.height = y + height - this.y;
 		}
-		
-		var cacheRight = right;
-		var cacheBottom = bottom;
-		
-		if (this.x > x)
-		{
-			this.x = x;
-			this.width = cacheRight - x;
-		}
-		if (this.y > y)
-		{
-			this.y = y;
-			this.height = cacheBottom - y;
-		}
-		if (cacheRight < x + width) this.width = x + width - this.x;
-		if (cacheBottom < y + height) this.height = y + height - this.y;
 		
 	}
 	
@@ -291,7 +290,7 @@ class Rectangle {
 	}
 	
 	
-	private function __transform (rect:Rectangle, m:Matrix):Void {
+	private inline function __transform (rect:Rectangle, m:Matrix):Void {
 		
 		var tx0 = m.a * x + m.c * y;
 		var tx1 = tx0;
