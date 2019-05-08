@@ -175,7 +175,33 @@ class TileContainer extends Tile {
 			
 			rect = tile.getBounds (targetCoordinateSpace);
 			
-			#if flash
+			inline function union (rect:Rectangle, toUnion:Rectangle):Rectangle {
+				
+				return if (rect.width == 0 || rect.height == 0) {
+					
+					rect.setTo(toUnion.x, toUnion.y, toUnion.width, toUnion.height);
+					rect;
+					
+				} else if (toUnion.width == 0 || toUnion.height == 0) {
+					
+					rect;
+					
+				} else {
+
+					var x0 = rect.x > toUnion.x ? toUnion.x : rect.x;
+					var x1 = rect.right < toUnion.right ? toUnion.right : rect.right;
+					var y0 = rect.y > toUnion.y ? toUnion.y : rect.y;
+					var y1 = rect.bottom < toUnion.bottom ? toUnion.bottom : rect.bottom;
+					
+					rect.setTo(x0, y0, x1 - x0, y1 - y0);
+					rect;
+				}
+
+			}
+
+			result = union (result, rect);
+
+			/*#if flash
 			inline function __expand (rect:Rectangle, x:Float, y:Float, width:Float, height:Float):Void {
 		
 				if (rect.width == 0 && rect.height == 0) {
@@ -206,10 +232,13 @@ class TileContainer extends Tile {
 			}
 
 			__expand (result, rect.x, rect.y, rect.width, rect.height);
+			//result = result.union (rect);
 
 			#else
 			result.__expand (rect.x, rect.y, rect.width, rect.height);
-			#end
+			#end*/
+
+			// __expand doesn't works!!!!! LOST SO MUCH TIME HOLY SHIT
 			
 		}
 			
