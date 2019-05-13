@@ -264,6 +264,13 @@ class Tile {
 			
 		}
 
+		// TODO: How is this possible?!?!?!?! getRect return null? id out of bounds!?!?
+		#if use_temp
+		if (result == null) return tempRectangle;
+		#else
+		if (result == null) return new Rectangle ();
+		#end
+
 		result.x = 0;
 		result.y = 0;
 
