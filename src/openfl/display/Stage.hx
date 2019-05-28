@@ -1394,12 +1394,15 @@ class Stage extends DisplayObjectContainer implements IModule {
 		
 	}
 	
-	
+	var skip = 0;
 	public function render (#if (lime >= "7.0.0") context:RenderContext #else renderer:Renderer #end):Void {
 		
 		#if (lime < "7.0.0")
 		if (renderer.window == null || renderer.window != window) return;
 		#end
+		
+		// Hack to prevent crash at startup, might not work
+		if (++skip <= 10) return;
 		
 		if (__rendering) return;
 		__rendering = true;
