@@ -1394,8 +1394,12 @@ class Stage extends DisplayObjectContainer implements IModule {
 		
 	}
 	
+	public static var pause = false;
+	
 	var skip = 0;
 	public function render (#if (lime >= "7.0.0") context:RenderContext #else renderer:Renderer #end):Void {
+		
+		if (pause) return;
 		
 		#if (lime < "7.0.0")
 		if (renderer.window == null || renderer.window != window) return;
