@@ -967,8 +967,11 @@ class Stage extends DisplayObjectContainer implements IModule {
 		
 	}
 	
+	public static var pause = false;
 	
 	public function render (renderer:Renderer):Void {
+		
+		if (pause) return;
 		
 		if (renderer.window == null || renderer.window != window) return;
 		
