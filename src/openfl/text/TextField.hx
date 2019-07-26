@@ -2003,7 +2003,7 @@ class TextField extends InteractiveObject {
 		
 		// TODO: Better DOM workaround on cacheAsBitmap
 		
-		if (renderer.__isDOM && !__renderedOnCanvasWhileOnDOM) {
+		@:privateAccess if (renderer.__isDOM && !__renderedOnCanvasWhileOnDOM) {
 			
 			__renderedOnCanvasWhileOnDOM = true;
 			
