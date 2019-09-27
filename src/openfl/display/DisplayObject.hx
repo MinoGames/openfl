@@ -212,7 +212,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if (open
 	// @:noCompletion @:dox(hide) public var accessibilityProperties:flash.accessibility.AccessibilityProperties;
 	
 	// Keep order index
-	public var sortingOrder = 0;
+	public var sortingOrder = -1;
 	
 	/**
 	 * Indicates the alpha transparency value of the object specified. Valid
