@@ -7,6 +7,7 @@ import openfl.display.MovieClip;
 
 #if (lime >= "7.0.0")
 import lime.ui.WindowAttributes;
+@:access(lime._internal.backend.native.NativeWindow)
 #else
 import lime.app.Config;
 #end
@@ -25,7 +26,9 @@ class Application extends LimeApplication {
 	
 	
 	public function new () {
-		
+		trace('new Application wait 0.5s');
+		Sys.sleep(0.5);
+		trace('...done waiting, gonna continue new Application');
 		super ();
 		
 		if (Lib.application == null) {
@@ -91,8 +94,8 @@ class Application extends LimeApplication {
 	
 	
 	#if (lime >= "7.0.0")
-	public override function createWindow (attributes:WindowAttributes):Window {
-		
+	public override function createWindow (attributes:WindowAttributes, retriedCount:Int=0):Window {
+		trace('openfl Application.createWindow will new Window with attributes ${attributes}');
 		var window = new Window (this, attributes);
 		
 		__windows.push (window);

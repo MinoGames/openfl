@@ -129,7 +129,9 @@ class OpenGLRenderer extends DisplayObjectRenderer {
 		__matrix = new Matrix4 ();
 		__values = new Array ();
 		
-		#if gl_debug
+		trace('OpenGLRenderer new');
+		#if true
+		trace('turn on gl_debug');
 		var ext:KHR_debug = __gl.getExtension ("KHR_debug");
 		if (ext != null) {
 			

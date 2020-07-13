@@ -179,6 +179,7 @@ import haxe.macro.Expr;
 			
 		}
 		
+		trace('openfl ApplicationMain will call app.CreateWindow with attributes($attributes)');
 		app.createWindow (attributes);
 		::end::
 		#elseif !air

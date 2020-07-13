@@ -656,6 +656,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 	
 	public function new (#if commonjs width:Dynamic = 0, height:Dynamic = 0, color:Null<Int> = null, documentClass:Class<Dynamic> = null, windowAttributes:Dynamic = null #else window:Window, color:Null<Int> = null #end) {
 		
+		trace('openfl new Stage ${haxe.CallStack.toString(haxe.CallStack.callStack())}');
 		#if hxtelemetry
 		Telemetry.__initialize ();
 		#end
@@ -768,6 +769,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 			
 			#if (lime >= "7.0.0")
 			
+			trace('Stage new OpenFLApplication then call createWindow');
 			app = new OpenFLApplication ();
 			window = app.createWindow (windowAttributes);
 			
@@ -1127,13 +1129,14 @@ class Stage extends DisplayObjectContainer implements IModule {
 	
 	public function onRenderContextLost (#if (lime < "7.0.0") renderer:Renderer #end):Void {
 		
+		trace('Stage.onRenderContextLost');
 		__renderer = null;
 		
 	}
 	
 	
 	public function onRenderContextRestored (#if (lime < "7.0.0") renderer:Renderer, #end context:RenderContext):Void {
-		
+		trace('Stage.onRenderContextRestored');
 		__createRenderer ();
 		
 	}
@@ -1245,6 +1248,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 		
 		if (#if (lime >= "7.0.0") window.context != null #else window.renderer != null #end) {
 			
+			trace('Stage.onWindowCreate ${window.displayMode}, ${window.width}, ${window.height}, ${window.x}, ${window.y}');
 			__createRenderer ();
 			
 		}
@@ -1579,6 +1583,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 	
 	
 	@:noCompletion private function __createRenderer ():Void {
+		trace('Stage.__createRenderer');
 		
 		#if (js && html5)
 		var pixelRatio = 1;
@@ -1600,11 +1605,14 @@ class Stage extends DisplayObjectContainer implements IModule {
 		#end
 		
 		#if (lime >= "7.0.0")
+		trace('Stage.__createRenderer 1');
 		switch (window.context.type) {
 			
 			case OPENGL, OPENGLES, WEBGL:
+				trace('Stage.__createRenderer 2');
 				
 				#if (!disable_cffi && (!html5 || !canvas))
+				trace('Stage.__createRenderer 3');
 				__renderer = new OpenGLRenderer (window.context);
 				
 				if (stage3Ds[0].context3D == null) {
@@ -1615,6 +1623,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 				#end
 			
 			case CANVAS:
+				trace('Stage.__createRenderer 4');
 				
 				#if (js && html5)
 				__renderer = new CanvasRenderer (window.context.canvas2D);
@@ -1622,6 +1631,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 				#end
 			
 			case DOM:
+				trace('Stage.__createRenderer 5');
 				
 				#if (js && html5)
 				__renderer = new DOMRenderer (window.context.dom);
@@ -1629,6 +1639,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 				#end
 			
 			case CAIRO:
+				trace('Stage.__createRenderer 6');
 				
 				#if lime_cairo
 				__renderer = new CairoRenderer (window.context.cairo);
@@ -1638,11 +1649,14 @@ class Stage extends DisplayObjectContainer implements IModule {
 			
 		}
 		#else
+			trace('Stage.__createRenderer 7');
 		switch (window.renderer.context) {
 			
 			case OPENGL (gl):
+				trace('Stage.__createRenderer 8');
 				
 				#if (!disable_cffi && (!html5 || !canvas))
+				trace('Stage.__createRenderer 9');
 				__renderer = new OpenGLRenderer (gl);
 				
 				if (stage3Ds[0].context3D == null) {
@@ -1653,6 +1667,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 				#end
 			
 			case CANVAS (context):
+				trace('Stage.__createRenderer 10');
 				
 				#if (js && html5)
 				__renderer = new CanvasRenderer (context);
@@ -1660,6 +1675,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 				#end
 			
 			case DOM (element):
+				trace('Stage.__createRenderer 11');
 				
 				#if (js && html5)
 				__renderer = new DOMRenderer (element);
@@ -1667,6 +1683,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 				#end
 			
 			case CAIRO (cairo):
+				trace('Stage.__createRenderer 12');
 				
 				#if lime_cairo
 				__renderer = new CairoRenderer (cairo);
@@ -1679,6 +1696,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 		#end
 		
 		if (__renderer != null) {
+			trace('Stage.__createRenderer 13');
 			
 			__renderer.__allowSmoothing = (quality != LOW);
 			__renderer.__worldTransform = __displayMatrix;

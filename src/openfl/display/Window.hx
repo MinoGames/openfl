@@ -26,6 +26,7 @@ class Window extends LimeWindow {
 	#if (lime >= "7.0.0")
 	@:noCompletion private function new (application:Application, attributes:WindowAttributes) {
 		
+		trace('openfl new Window attributes: ${attributes}');
 		super (application, attributes);
 		
 		#if (!flash && !macro)
@@ -39,6 +40,7 @@ class Window extends LimeWindow {
 			
 		} else
 		#end
+		trace('openfl new Window new Stage');
 		stage = new Stage (this, Reflect.hasField (attributes.context, "background") ? attributes.context.background : 0xFFFFFF);
 		
 		if (Reflect.hasField (attributes, "parameters")) {

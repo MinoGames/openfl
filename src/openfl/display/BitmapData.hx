@@ -931,6 +931,7 @@ class BitmapData implements IBitmapDrawable {
 			}
 			
 			var renderer = new OpenGLRenderer (__textureContext, this);
+			trace('BitmapData.draw new OpenGLRenderer');
 			renderer.__allowSmoothing = smoothing;
 			renderer.__setBlendMode (blendMode);
 			

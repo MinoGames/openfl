@@ -2149,6 +2149,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if (open
 					
 					if (renderType == OPENGL) {
 						
+						trace('DisplayObject.__updateCacheBitmap new OpenGLRenderer');
 						__cacheBitmapRenderer = new OpenGLRenderer (renderer.__context, __cacheBitmapData);
 						
 					} else {
