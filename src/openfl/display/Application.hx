@@ -7,8 +7,10 @@ import openfl.display.MovieClip;
 
 #if (lime >= "7.0.0")
 import lime.ui.WindowAttributes;
+#if mobile
 @:access(lime.ui.Window)
 @:access(lime._internal.backend.native.NativeWindow)
+#end
 #else
 import lime.app.Config;
 #end
@@ -143,7 +145,11 @@ class Application extends LimeApplication {
 	}
 	
 	public function isUsingHardware():Bool {
+		#if mobile
 		return __window.__backend.useHardware;
+		#else
+		return true;
+		#end
 	}
 	#end
 	
