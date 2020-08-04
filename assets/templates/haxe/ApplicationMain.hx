@@ -6,6 +6,7 @@ import haxe.macro.Compiler;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 #end
+import haxe.Timer;
 
 @:access(lime.app.Application)
 @:access(lime.system.System)
@@ -104,7 +105,7 @@ import haxe.macro.Expr;
 	
 	
 	public static function create (config):Void {
-		
+        Sys.sleep (0.5);
 		var app = new openfl.display.Application ();
 		
 		#if (lime >= "7.0.0")
