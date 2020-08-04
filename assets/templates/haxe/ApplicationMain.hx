@@ -7,6 +7,9 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 #end
 
+import haxe.Timer;
+import openfl._internal.Lib;
+
 @:access(lime.app.Application)
 @:access(lime.system.System)
 @:access(openfl.display.Stage)
@@ -196,8 +199,8 @@ import haxe.macro.Expr;
 			@:privateAccess preloader.start ();
 		});
 		
-		preloader.onComplete.add (start.bind (cast (app.window, openfl.display.Window).stage));
-		
+		preloader.onComplete.add (prestart.bind (app, attributes));
+
 		for (library in ManifestResources.preloadLibraries) {
 			
 			app.preloader.addLibrary (library);
@@ -248,6 +251,22 @@ import haxe.macro.Expr;
 		
 	}
 	
+    public static function prestart (app: openfl.display.Application, attributes:lime.ui.WindowAttributes):Void {
+        if (app.isUsingHardware()) {
+            start(cast (app.window, openfl.display.Window).stage);
+        } else {
+            app.window.close();
+
+            Timer.delay(function() {
+                app.createWindow (attributes);
+                Lib.current.stage.window = app.window;
+                app.onCreateWindow.dispatch(app.window);
+                Timer.delay(function() {
+                    start(cast (app.window, openfl.display.Window).stage);
+                }, 100);
+            }, 100);
+        }
+    }
 	
 	public static function start (stage:openfl.display.Stage):Void {
 		

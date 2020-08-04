@@ -39,7 +39,12 @@ class Window extends LimeWindow {
 			
 		} else
 		#end
-		stage = new Stage (this, Reflect.hasField (attributes.context, "background") ? attributes.context.background : 0xFFFFFF);
+        var reuseStage = Lib.current.stage != null;
+        if (reuseStage) {
+            stage = Lib.current.stage;
+        } else {
+            stage = new Stage (this, Reflect.hasField (attributes.context, "background") ? attributes.context.background : 0xFFFFFF);
+        }
 		
 		if (Reflect.hasField (attributes, "parameters")) {
 			
@@ -57,7 +62,9 @@ class Window extends LimeWindow {
 			
 		}
 		
-		application.addModule (stage);
+        if (!reuseStage) {
+            application.addModule (stage);
+        }
 		
 		#else
 		
