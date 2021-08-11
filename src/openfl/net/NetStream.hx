@@ -86,6 +86,7 @@ class NetStream extends EventDispatcher {
 	@:noCompletion private var __timer:Timer;
 	
 	#if (js && html5)
+	@:noCompletion @:isVar private var __seeking (get, set):Bool;
 	@:noCompletion private var __video (default, null):VideoElement;
 	#end
 	
@@ -248,9 +249,9 @@ class NetStream extends EventDispatcher {
 			
 		}
 		
+		__seeking = true;
+		__connection.dispatchEvent (new NetStatusEvent (NetStatusEvent.NET_STATUS, false, false, { code : "NetStream.SeekStart.Notify" } ));
 		__video.currentTime = time;
-		
-		__connection.dispatchEvent (new NetStatusEvent (NetStatusEvent.NET_STATUS, false, false, { code : "NetStream.Seek.Complete" } ));
 		#end
 		
 	}
@@ -404,6 +405,7 @@ class NetStream extends EventDispatcher {
 		
 		__playStatus ("NetStream.Play.seeking");
 		
+		__connection.dispatchEvent (new NetStatusEvent (NetStatusEvent.NET_STATUS, false, false, { code : "NetStream.Seek.Complete" } ));
 	}
 	
 	
@@ -456,6 +458,28 @@ class NetStream extends EventDispatcher {
 		
 		#if (js && html5)
 		return __video != null ? __video.playbackRate = value : value;
+		#else
+		return value;
+		#end
+		
+	}
+	
+	
+	@:noCompletion private function get___seeking ():Bool {
+		
+		#if (js && html5)
+		return __seeking || __video.seeking;
+		#else
+		return false;
+		#end
+		
+	}
+	
+	
+	@:noCompletion private function set___seeking (value:Bool):Bool {
+		
+		#if (js && html5)
+		return __seeking = value;
 		#else
 		return value;
 		#end

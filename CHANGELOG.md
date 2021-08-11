@@ -1,3 +1,66 @@
+8.7.0 (12/04/2018)
+------------------
+
+* Updated to Lime 7.2.*
+* Added `stage.fullScreenSourceRect` support
+* Added initial `tile.getBounds` and `tile.hitTestTile` APIs
+* Added support for using `<tab>` to set focus (`tabIndex`, `tabChildren` etc)
+* Improved several internal APIs for better memory and performance
+* Improved the quality of `DropShadowFilter` and `GlowFilter`
+* Improved `DisplacementMapFilter` to support software rendering
+* Improved support for Haxe 4 preview 5
+* Improved the behavior of `simpleButton.enabled` and `simpleButton.mouseEnabled`
+* Improved the behavior of `movieClip.buttonMode`
+* Improved the behavior of `MouseEvent.RELEASE_OUTSIDE`
+* Improved the quality of `bitmapData.perlinNoise`
+* Improved the rendering of `cacheAsBitmap` objects with alpha
+* Improved the GL renderer to respect `StageQuality.LOW` to disable smoothing
+* Improved the standard index.html template for cases when the window is transparent
+* Improved rendering in `TextField` with underlined text
+* Improved handling of HTML5 text when we know the font ascent/descent at compile-time
+* Improved `MovieClip` framescript timing and reliability
+* Improved SWF class generation with additional properties and more reliability
+* Fixed setting transforms for `cacheAsBitmap` objects
+* Fixed an internal issue when pooling `ColorTransform` that could fail in recursion
+* Fixed the `TextFormat` extern types to not have an extra field
+* Fixed texture upload for HTML5 video when video was not ready yet
+* Fixed a regression when performing the letterboxing logic on non-resizable windows
+* Fixed an issue where fonts on native targets had the wrong baseline
+* Fixed incorrect handling of transforms for same frames in SWF timeline animations
+
+
+8.6.4 (10/19/2018)
+------------------
+
+* Improved ES module imports at top-level by making all types available
+
+
+8.6.3 (10/19/2018)
+------------------
+
+* Set Lime to use a hard-coded version (unless -Ddisable-version-check)
+* Improved updating of `Stage3D` `VideoTexture` when video is seeking
+* Fixed cache invalidation in `Bitmap` when using `filters`
+* Fixed how `Context3D` scissoring was handled in non-shared `Stage3D` context
+* Fixed some issues with software `GlowFilter` and `DropShadowFilter`
+
+
+8.6.2 (10/15/2018)
+------------------
+
+* Fixed an issue when using custom WebGL rendering in NPM version
+* Fixed an issue in NPM samples that do not size the stage immediately
+
+
+8.6.1 (10/15/2018)
+------------------
+
+* Fixed use of `VideoTexture` with cube geometry
+* Fixed a regression in the behavior of `scrollRect`
+* Fixed an issue where the bottom of some HTML5 text could be cut off
+* Fixed issues when applying `DropShadowFilter` to `TextField` in software
+
+
 8.6.0 (10/12/2018)
 ------------------
 
