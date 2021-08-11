@@ -10,6 +10,7 @@ import lime.graphics.RenderContext;
 import lime.graphics.WebGLRenderContext;
 import lime.math.Matrix4;
 import lime.utils.Float32Array;
+import lime.utils.ObjectPool;
 import openfl._internal.renderer.context3D.Context3DMaskShader;
 import openfl._internal.renderer.ShaderBuffer;
 import openfl.display3D.Context3DClearMask;
@@ -87,6 +88,7 @@ class OpenGLRenderer extends DisplayObjectRenderer {
 	@:noCompletion private var __offsetY:Int;
 	@:noCompletion private var __projection:Matrix4;
 	@:noCompletion private var __projectionFlipped:Matrix4;
+	@:noCompletion private var __scrollRectMasks:ObjectPool<Shape>;
 	@:noCompletion private var __softwareRenderer:DisplayObjectRenderer;
 	@:noCompletion private var __stencilReference:Int;
 	@:noCompletion private var __tempRect:Rectangle;
@@ -153,6 +155,7 @@ class OpenGLRenderer extends DisplayObjectRenderer {
 		
 		__initShader (__defaultShader);
 		
+		__scrollRectMasks = new ObjectPool<Shape> (function () { return new Shape (); });
 		__maskShader = new Context3DMaskShader ();
 		
 	}
@@ -306,7 +309,7 @@ class OpenGLRenderer extends DisplayObjectRenderer {
 		
 		if (gl != null) {
 			
-			var values = __getMatrix (transform);
+			var values = __getMatrix (transform, AUTO);
 			
 			for (i in 0...16) {
 				
@@ -342,7 +345,7 @@ class OpenGLRenderer extends DisplayObjectRenderer {
 		if (__currentShader != null) {
 			
 			// TODO: Integrate cleanup with Context3D
-			__currentShader.__disable ();
+			// __currentShader.__disable ();
 			
 		}
 		
@@ -350,7 +353,7 @@ class OpenGLRenderer extends DisplayObjectRenderer {
 			
 			__currentShader = null;
 			__context3D.setProgram (null);
-			__context3D.__flushGLProgram ();
+			// __context3D.__flushGLProgram ();
 			return;
 			
 		} else {
@@ -361,6 +364,7 @@ class OpenGLRenderer extends DisplayObjectRenderer {
 			__context3D.__flushGLProgram ();
 			__context3D.__flushGLTextures ();
 			__currentShader.__enable ();
+			__context3D.__state.shader = shader;
 			
 		}
 		
@@ -488,13 +492,13 @@ class OpenGLRenderer extends DisplayObjectRenderer {
 	}
 	
 	
-	@:noCompletion private function __getMatrix (transform:Matrix):Array<Float> {
+	@:noCompletion private function __getMatrix (transform:Matrix, pixelSnapping:PixelSnapping):Array<Float> {
 		
 		var _matrix = Matrix.__pool.get ();
 		_matrix.copyFrom (transform);
 		_matrix.concat (__worldTransform);
 		
-		if (__roundPixels) {
+		if (pixelSnapping == ALWAYS || (pixelSnapping == AUTO && _matrix.b == 0 && _matrix.c == 0 && (_matrix.a < 1.001 && _matrix.a > 0.999) && (_matrix.d < 1.001 && _matrix.d > 0.999))) {
 			
 			_matrix.tx = Math.round (_matrix.tx);
 			_matrix.ty = Math.round (_matrix.ty);
@@ -645,7 +649,16 @@ class OpenGLRenderer extends DisplayObjectRenderer {
 		
 		if (handleScrollRect && object.__scrollRect != null) {
 			
-			__popMaskRect ();
+			if (object.__renderTransform.b != 0 || object.__renderTransform.c != 0) {
+				
+				__scrollRectMasks.release (cast __maskObjects[__maskObjects.length - 1]);
+				__popMask ();
+				
+			} else {
+				
+				__pushMaskRect (object.__scrollRect, object.__renderTransform);
+				
+			}
 			
 		}
 		
@@ -701,7 +714,20 @@ class OpenGLRenderer extends DisplayObjectRenderer {
 		
 		if (handleScrollRect && object.__scrollRect != null) {
 			
-			__pushMaskRect (object.__scrollRect, object.__renderTransform);
+			if (object.__renderTransform.b != 0 || object.__renderTransform.c != 0) {
+				
+				var shape = __scrollRectMasks.get ();
+				shape.graphics.clear ();
+				shape.graphics.beginFill (0x00FF00);
+				shape.graphics.drawRect (object.__scrollRect.x, object.__scrollRect.y, object.__scrollRect.width, object.__scrollRect.height);
+				shape.__renderTransform.copyFrom (object.__renderTransform);
+				__pushMask (shape);
+				
+			} else {
+				
+				__pushMaskRect (object.__scrollRect, object.__renderTransform);
+				
+			}
 			
 		}
 		
@@ -841,7 +867,7 @@ class OpenGLRenderer extends DisplayObjectRenderer {
 	}
 	
 	
-	@:noCompletion private function __renderFilterPass (source:BitmapData, shader:Shader, clear:Bool = true):Void {
+	@:noCompletion private function __renderFilterPass (source:BitmapData, shader:Shader, smooth:Bool, clear:Bool = true):Void {
 		
 		if (source == null || shader == null) return;
 		if (__defaultRenderTarget == null) return;
@@ -862,9 +888,9 @@ class OpenGLRenderer extends DisplayObjectRenderer {
 		var shader = __initShader (shader);
 		setShader (shader);
 		applyAlpha (1);
-		applyBitmapData (source, false);
+		applyBitmapData (source, smooth);
 		applyColorTransform (null);
-		applyMatrix (__getMatrix (source.__renderTransform));
+		applyMatrix (__getMatrix (source.__renderTransform, AUTO));
 		updateShader ();
 		
 		var vertexBuffer = source.getVertexBuffer (__context3D);
@@ -940,14 +966,14 @@ class OpenGLRenderer extends DisplayObjectRenderer {
 			
 			var x = Math.floor (clipRect.x);
 			var y = Math.floor (clipRect.y);
-			var width = Math.ceil (clipRect.right) - x;
-			var height = Math.ceil (clipRect.bottom) - y;
+			var width = (clipRect.width > 0 ? Math.ceil (clipRect.right) - x : 0);
+			var height = (clipRect.height > 0 ? Math.ceil (clipRect.bottom) - y : 0);
 			
 			if (width < 0) width = 0;
 			if (height < 0) height = 0;
 			
-			// __scissorRectangle.setTo (x, __flipped ? __height - y - height : y, width, height);
-			__scissorRectangle.setTo (x, y, width, height);
+			__scissorRectangle.setTo (x, !__flipped ? __height - y - height : y, width, height);
+			// __scissorRectangle.setTo (x, y, width, height);
 			__context3D.setScissorRectangle (__scissorRectangle);
 			
 		} else {
