@@ -1,9 +1,6 @@
 package openfl._internal.renderer.context3D;
 
 
-import lime.math.ARGB;
-import lime.utils.Float32Array;
-import lime.utils.UInt16Array;
 import openfl._internal.renderer.cairo.CairoGraphics;
 import openfl._internal.renderer.canvas.CanvasGraphics;
 import openfl.display.BitmapData;
@@ -13,6 +10,12 @@ import openfl.display.Shader;
 import openfl.geom.ColorTransform;
 import openfl.geom.Matrix;
 import openfl.geom.Rectangle;
+
+#if lime
+import lime.math.ARGB;
+import lime.utils.Float32Array;
+import lime.utils.UInt16Array;
+#end
 
 #if gl_stats
 import openfl._internal.renderer.context3D.stats.Context3DStats;
@@ -38,7 +41,7 @@ class Context3DGraphics {
 	
 	private static var blankBitmapData = new BitmapData (1, 1, false, 0);
 	private static var maskRender:Bool;
-	private static var tempColorTransform = new ColorTransform (0, 0, 0, 1, 0, 0, 0, 0);
+	private static var tempColorTransform = new ColorTransform (1, 1, 1, 1, 0, 0, 0, 0);
 	
 	
 	private static function buildBuffer (graphics:Graphics, renderer:OpenGLRenderer):Void {
@@ -390,9 +393,9 @@ class Context3DGraphics {
 	
 	private static function isCompatible (graphics:Graphics):Bool {
 		
-		#if force_sw_graphics
+		#if (openfl_force_sw_graphics || force_sw_graphics)
 		return false;
-		#elseif force_hw_graphics
+		#elseif (openfl_force_hw_graphics || force_hw_graphics)
 		return true;
 		#end
 		
@@ -473,6 +476,10 @@ class Context3DGraphics {
 				case MOVE_TO:
 					
 					data.skip (type);
+					
+				case OVERRIDE_BLEND_MODE:
+				
+					data.skip (type);
 				
 				default:
 					
@@ -532,7 +539,7 @@ class Context3DGraphics {
 			
 			if (bounds != null && width >= 1 && height >= 1) {
 				
-				if (graphics.__dirty || (graphics.__quadBuffer == null && graphics.__vertexBuffer == null && graphics.__vertexBufferUVT == null)) {
+				if (graphics.__hardwareDirty || (graphics.__quadBuffer == null && graphics.__vertexBuffer == null && graphics.__vertexBufferUVT == null)) {
 					
 					buildBuffer (graphics, renderer);
 					
@@ -686,10 +693,12 @@ class Context3DGraphics {
 								var width = c.width;
 								var height = c.height;
 								
+								#if lime
 								var color:ARGB = (fill:ARGB);
 								tempColorTransform.redOffset = color.r;
 								tempColorTransform.greenOffset = color.g;
 								tempColorTransform.blueOffset = color.b;
+								#end
 								tempColorTransform.__combine (graphics.__owner.__worldColorTransform);
 								
 								matrix.identity ();
@@ -702,7 +711,9 @@ class Context3DGraphics {
 								renderer.setShader (shader);
 								renderer.applyMatrix (renderer.__getMatrix (matrix, AUTO));
 								renderer.applyBitmapData (blankBitmapData, renderer.__allowSmoothing, repeat);
+								#if lime
 								renderer.applyAlpha ((color.a / 0xFF) * graphics.__owner.__worldAlpha);
+								#end
 								renderer.applyColorTransform (tempColorTransform);
 								renderer.updateShader ();
 								
@@ -829,6 +840,11 @@ class Context3DGraphics {
 							positionX = c.x;
 							positionY = c.y;
 						
+						case OVERRIDE_BLEND_MODE:
+						
+							var c = data.readOverrideBlendMode ();
+							renderer.__setBlendMode (c.blendMode);
+						
 						default:
 							
 							data.skip (type);
@@ -841,6 +857,7 @@ class Context3DGraphics {
 				
 			}
 			
+			graphics.__hardwareDirty = false;
 			graphics.__dirty = false;
 			
 		}
@@ -866,6 +883,7 @@ class Context3DGraphics {
 		var buffer = (isQuad ? null /*graphics.__quadIndexBufferData*/ : graphics.__triangleIndexBufferData);
 		var position = 0, newBuffer = null;
 		
+		#if lime
 		if (buffer == null) {
 			
 			newBuffer = new UInt16Array (length);
@@ -877,6 +895,7 @@ class Context3DGraphics {
 			position = buffer.length;
 			
 		}
+		#end
 		
 		if (newBuffer != null) {
 			
@@ -915,6 +934,7 @@ class Context3DGraphics {
 		var buffer = (hasUVTData ? graphics.__vertexBufferDataUVT : graphics.__vertexBufferData);
 		var newBuffer = null;
 		
+		#if lime
 		if (buffer == null) {
 			
 			newBuffer = new Float32Array (length);
@@ -925,6 +945,7 @@ class Context3DGraphics {
 			newBuffer.set (buffer);
 			
 		}
+		#end
 		
 		if (newBuffer != null) {
 			hasUVTData ? graphics.__vertexBufferDataUVT = newBuffer : graphics.__vertexBufferData = newBuffer;

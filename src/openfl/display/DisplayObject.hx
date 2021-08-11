@@ -1,10 +1,6 @@
 package openfl.display; #if !flash
 
 
-import lime._internal.graphics.ImageCanvasUtil; // TODO
-import lime.graphics.cairo.Cairo;
-import lime.ui.MouseCursor;
-import lime.utils.ObjectPool;
 import openfl._internal.renderer.cairo.CairoBitmap;
 import openfl._internal.renderer.cairo.CairoDisplayObject;
 import openfl._internal.renderer.cairo.CairoGraphics;
@@ -17,6 +13,7 @@ import openfl._internal.renderer.context3D.Context3DBitmap;
 import openfl._internal.renderer.context3D.Context3DDisplayObject;
 import openfl._internal.renderer.context3D.Context3DGraphics;
 import openfl._internal.renderer.context3D.Context3DShape;
+import openfl._internal.utils.ObjectPool;
 import openfl._internal.Lib;
 import openfl.display.Stage;
 import openfl.errors.TypeError;
@@ -32,7 +29,13 @@ import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.geom.Transform;
+import openfl.ui.MouseCursor;
 import openfl.Vector;
+
+#if lime
+import lime._internal.graphics.ImageCanvasUtil; // TODO
+import lime.graphics.cairo.Cairo;
+#end
 
 #if (js && html5)
 import js.html.CanvasElement;
@@ -762,7 +765,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if (open
 	@:noCompletion private var __cacheBitmapData3:BitmapData;
 	@:noCompletion private var __cacheBitmapMatrix:Matrix;
 	@:noCompletion private var __cacheBitmapRenderer:DisplayObjectRenderer;
-	@:noCompletion private var __cairo:Cairo;
+	@:noCompletion private var __cairo:#if lime Cairo #else Dynamic #end;
 	@:noCompletion private var __children:Array<DisplayObject>;
 	@:noCompletion private var __customRenderClear:Bool;
 	@:noCompletion private var __customRenderEvent:RenderEvent;
@@ -1652,6 +1655,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if (open
 	
 	@:noCompletion private function __renderEvent (renderer:DisplayObjectRenderer):Void {
 		
+		#if lime
 		if (__customRenderEvent != null && __renderable) {
 			
 			__customRenderEvent.allowSmoothing = renderer.__allowSmoothing;
@@ -1712,6 +1716,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if (open
 			}
 			
 		}
+		#end
 		
 	}
 	
@@ -1887,7 +1892,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if (open
 				if (__blendMode == null || __blendMode == NORMAL) {
 					
 					// TODO: Handle multiple blend modes better
-					__worldBlendMode = renderParent.__blendMode;
+					__worldBlendMode = renderParent.__worldBlendMode;
 					
 				} else {
 					
@@ -1949,6 +1954,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if (open
 	
 	@:noCompletion private function __updateCacheBitmap (renderer:DisplayObjectRenderer, force:Bool):Bool {
 		
+		#if lime
 		if (__isCacheBitmapRender) return false;
 		#if openfl_disable_cacheasbitmap return false; #end
 		
@@ -1961,7 +1967,35 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if (open
 			
 			var rect = null;
 			
-			var needRender = (__cacheBitmap == null || (__renderDirty && (force || (__children != null && __children.length > 0) || (__graphics != null && __graphics.__dirty))) || opaqueBackground != __cacheBitmapBackground || (renderer.__type != OPENGL && !__cacheBitmapColorTransform.__equals (colorTransform, true)));
+			var needRender = (__cacheBitmap == null || (__renderDirty && (force || (__children != null && __children.length > 0))) || opaqueBackground != __cacheBitmapBackground);
+			var softwareDirty = needRender || (__graphics != null && __graphics.__softwareDirty) || !__cacheBitmapColorTransform.__equals (colorTransform, true);
+			var hardwareDirty = needRender || (__graphics != null && __graphics.__hardwareDirty);
+			
+			var renderType = renderer.__type;
+			
+			if (softwareDirty || hardwareDirty) {
+				
+				#if !openfl_force_gl_cacheasbitmap
+				if (renderType == OPENGL) {
+					
+					if (#if !openfl_disable_gl_cacheasbitmap __shouldCacheHardware (null) == false #else true #end) {
+						
+						#if (js && html5)
+						renderType = CANVAS;
+						#else
+						renderType = CAIRO;
+						#end
+						
+					}
+					
+				}
+				#end
+				
+				if (softwareDirty && (renderType == CANVAS || renderType == CAIRO)) needRender = true;
+				if (hardwareDirty && renderType == OPENGL) needRender = true;
+				
+			}
+			
 			var updateTransform = (needRender || !__cacheBitmap.__worldTransform.equals (__worldTransform));
 			var hasFilters = #if !openfl_disable_filters __filters != null #else false #end;
 			
@@ -2136,24 +2170,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if (open
 			
 			if (needRender) {
 				
-				var renderType = renderer.__type;
-				
-				#if !openfl_force_gl_cacheasbitmap
-				if (renderType == OPENGL) {
-					
-					if (#if !openfl_disable_gl_cacheasbitmap __shouldCacheHardware (null) == false #else true #end) {
-						
-						#if (js && html5)
-						renderType = CANVAS;
-						#else
-						renderType = CAIRO;
-						#end
-						
-					}
-					
-				}
-				#end
-				
+				#if lime
 				if (__cacheBitmapRenderer == null || renderType != __cacheBitmapRenderer.__type) {
 					
 					if (renderType == OPENGL) {
@@ -2183,6 +2200,9 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if (open
 					__cacheBitmapRenderer.__worldColorTransform = new ColorTransform ();
 					
 				}
+				#else
+				return false;
+				#end
 				
 				if (__cacheBitmapColorTransform == null) __cacheBitmapColorTransform = new ColorTransform ();
 				
@@ -2481,6 +2501,9 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if (open
 		ColorTransform.__pool.release (colorTransform);
 		
 		return updated;
+		#else
+		return false;
+		#end
 		
 	}
 	
@@ -2552,7 +2575,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if (open
 		if (value > 1.0) value = 1.0;
 		if (value < 0.0) value = 0.0;
 		
-		if (value != __alpha) __setRenderDirty ();
+		if (value != __alpha && !cacheAsBitmap) __setRenderDirty ();
 		return __alpha = value;
 		
 	}
@@ -2915,26 +2938,36 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if (open
 			
 		}
 		
-		return __scrollRect.clone();
+		return __scrollRect.clone ();
 		
 	}
 	
 	
 	@:noCompletion private function set_scrollRect (value:Rectangle):Rectangle {
 		
-		if (value != __scrollRect) {
+		if (value == null && __scrollRect == null) return value;
+		if (value != null && __scrollRect != null && __scrollRect.equals (value)) return value;
+		
+		if (value != null) {
 			
-			__setTransformDirty ();
+			if (__scrollRect == null) __scrollRect = new Rectangle ();
+			__scrollRect.copyFrom (value);
 			
-			if (__supportDOM) {
-				
-				__setRenderDirty ();
-				
-			}
+		} else {
+			
+			__scrollRect = null;
 			
 		}
 		
-		return __scrollRect = value;
+		__setTransformDirty ();
+		
+		if (__supportDOM) {
+			
+			__setRenderDirty ();
+			
+		}
+		
+		return value;
 		
 	}
 	
@@ -2985,7 +3018,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if (open
 		__setTransformDirty ();
 		__objectTransform.matrix = value.matrix;
 		
-		if (!__objectTransform.colorTransform.__equals (value.colorTransform, true)) {
+		if (!__objectTransform.colorTransform.__equals (value.colorTransform, true) || (!cacheAsBitmap && __objectTransform.colorTransform.alphaMultiplier != value.colorTransform.alphaMultiplier)) {
 			
 			__objectTransform.colorTransform.__copyFrom (value.colorTransform);
 			__setRenderDirty ();

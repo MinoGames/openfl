@@ -1183,7 +1183,6 @@ class InteractiveObject extends DisplayObject {
 	public function requestSoftKeyboard ():Bool {
 		
 		openfl._internal.Lib.notImplemented ();
-		
 		return false;
 		
 	}
@@ -1227,7 +1226,7 @@ class InteractiveObject extends DisplayObject {
 		
 		if (tabEnabled) {
 			
-			stack.push(this);
+			stack.push (this);
 			
 		}
 		

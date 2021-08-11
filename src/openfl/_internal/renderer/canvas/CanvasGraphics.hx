@@ -1,7 +1,6 @@
 package openfl._internal.renderer.canvas;
 
 
-import lime._internal.graphics.ImageCanvasUtil; // TODO
 import openfl.display.BitmapData;
 import openfl.display.BitmapDataChannel;
 import openfl.display.CanvasRenderer;
@@ -19,6 +18,10 @@ import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.utils.ByteArray;
 import openfl.Vector;
+
+#if lime
+import lime._internal.graphics.ImageCanvasUtil; // TODO
+#end
 
 #if (js && html5)
 import js.html.CanvasElement;
@@ -1250,7 +1253,7 @@ class CanvasGraphics {
 		
 		graphics.__update (renderer.__worldTransform);
 		
-		if (graphics.__dirty) {
+		if (graphics.__softwareDirty) {
 			
 			hitTesting = false;
 			
@@ -1284,6 +1287,8 @@ class CanvasGraphics {
 				var scale = renderer.pixelRatio;
 				var scaledWidth = Std.int (width * scale);
 				var scaledHeight = Std.int (height * scale);
+				
+				renderer.__setBlendModeContext (context, NORMAL);
 				
 				if (renderer.__isDOM) {
 					
@@ -1551,6 +1556,11 @@ class CanvasGraphics {
 							var c = data.readDrawTriangles ();
 							fillCommands.drawTriangles (c.vertices, c.indices, c.uvtData, c.culling);
 						
+						case OVERRIDE_BLEND_MODE:
+							
+							var c = data.readOverrideBlendMode ();
+							renderer.__setBlendModeContext (context, c.blendMode);
+						
 						case WINDING_EVEN_ODD:
 							
 							data.readWindingEvenOdd ();
@@ -1588,6 +1598,7 @@ class CanvasGraphics {
 				
 			}
 			
+			graphics.__softwareDirty = false;
 			graphics.__dirty = false;
 			
 		}

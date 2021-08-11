@@ -1,19 +1,16 @@
 package openfl.display;
 
 
-import lime.app.Application as LimeApplication;
-import lime.ui.WindowAttributes;
 import openfl._internal.Lib;
 import openfl.display.MovieClip;
 
-#if (lime >= "7.0.0")
+#if lime
+import lime.app.Application as LimeApplication;
 import lime.ui.WindowAttributes;
 #if mobile
 @:access(lime.ui.Window)
 @:access(lime._internal.backend.native.NativeWindow)
 #end
-#else
-import lime.app.Config;
 #end
 
 #if !openfl_debug
@@ -26,12 +23,21 @@ import lime.app.Config;
 @:access(openfl.display.Window)
 
 
-class Application extends LimeApplication {
+class Application #if lime extends LimeApplication #end {
+	
+	
+	#if !lime
+	public static var current:Application;
+	
+	public var window:Window;
+	#end
 	
 	
 	public function new () {
 		
+		#if lime
 		super ();
+		#end
 		
 		if (Lib.application == null) {
 			
@@ -48,6 +54,7 @@ class Application extends LimeApplication {
 	}
 	
 	
+	#if lime
 	public override function createWindow (attributes:WindowAttributes):Window {
 		
 		var window = new Window (this, attributes);
@@ -96,6 +103,7 @@ class Application extends LimeApplication {
 		return window;
 		
 	}
+	#end
 	
 	public function isUsingHardware():Bool {
 		#if mobile

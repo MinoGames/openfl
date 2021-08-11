@@ -1,7 +1,6 @@
 package openfl.display; #if !flash
 
 
-import lime.utils.Log;
 import openfl._internal.formats.swf.SWFLite;
 import openfl._internal.symbols.BitmapSymbol;
 import openfl._internal.symbols.ButtonSymbol;
@@ -14,12 +13,12 @@ import openfl._internal.symbols.SWFSymbol;
 import openfl._internal.symbols.timeline.Frame;
 import openfl._internal.symbols.timeline.FrameObject;
 import openfl._internal.symbols.timeline.FrameObjectType;
+import openfl._internal.utils.Log;
 import openfl.errors.ArgumentError;
 import openfl.events.Event;
 import openfl.events.MouseEvent;
 import openfl.filters.*;
 import openfl.geom.ColorTransform;
-import openfl.text.TextField;
 
 #if hscript
 import hscript.Interp;
@@ -129,7 +128,7 @@ class MovieClip extends Sprite #if (openfl_dynamic && haxe_ver < "4.0.0") implem
 	 * disabled. If `enabled` is set to `false`, the object
 	 * is not included in automatic tab ordering.
 	 */
-	public var enabled:Bool;
+	public var enabled (get, set):Bool;
 	
 	/**
 	 * The number of frames that are loaded from a streaming SWF file. You can
@@ -168,6 +167,7 @@ class MovieClip extends Sprite #if (openfl_dynamic && haxe_ver < "4.0.0") implem
 	@:noCompletion private var __currentFrameLabel:String;
 	@:noCompletion private var __currentLabel:String;
 	@:noCompletion private var __currentLabels:Array<FrameLabel>;
+	@:noCompletion private var __enabled:Bool;
 	@:noCompletion private var __frameScripts:Map<Int, Void->Void>;
 	@:noCompletion private var __frameTime:Int;
 	@:noCompletion private var __hasDown:Bool;
@@ -197,6 +197,7 @@ class MovieClip extends Sprite #if (openfl_dynamic && haxe_ver < "4.0.0") implem
 			"currentFrameLabel": { get: untyped __js__ ("function () { return this.get_currentFrameLabel (); }") },
 			"currentLabel": { get: untyped __js__ ("function () { return this.get_currentLabel (); }") },
 			"currentLabels": { get: untyped __js__ ("function () { return this.get_currentLabels (); }") },
+			"enabled": { get: untyped __js__ ("function () { return this.get_enabled (); }"), set: untyped __js__ ("function (v) { return this.set_enabled (v); }") },
 			"framesLoaded": { get: untyped __js__ ("function () { return this.get_framesLoaded (); }") },
 			"isPlaying": { get: untyped __js__ ("function () { return this.get_isPlaying (); }") },
 			"totalFrames": { get: untyped __js__ ("function () { return this.get_totalFrames (); }") },
@@ -219,7 +220,7 @@ class MovieClip extends Sprite #if (openfl_dynamic && haxe_ver < "4.0.0") implem
 		__currentLabels = [];
 		__instanceFields = [];
 		__totalFrames = 0;
-		enabled = true;
+		__enabled = true;
 		
 		if (__initSymbol != null) {
 			
@@ -961,6 +962,14 @@ class MovieClip extends Sprite #if (openfl_dynamic && haxe_ver < "4.0.0") implem
 	}
 	
 	
+	@:noCompletion private override function __tabTest (stack:Array<InteractiveObject>):Void {
+		
+		if (!__enabled) return;
+		super.__tabTest (stack);
+		
+	}
+	
+	
 	@:noCompletion private function __updateDisplayObject (displayObject:DisplayObject, frameObject:FrameObject, reset : Bool = false):Void {
 		
 		if (displayObject == null) return;
@@ -1108,7 +1117,7 @@ class MovieClip extends Sprite #if (openfl_dynamic && haxe_ver < "4.0.0") implem
 	
 	@:noCompletion private function __onMouseDown (event:MouseEvent):Void {
 		
-		if (__hasDown) {
+		if (__enabled && __hasDown) {
 			
 			gotoAndStop ("_down");
 			
@@ -1130,11 +1139,11 @@ class MovieClip extends Sprite #if (openfl_dynamic && haxe_ver < "4.0.0") implem
 			
 		}
 		
-		if (event.target == this && __hasOver) {
+		if (event.target == this && __enabled && __hasOver) {
 			
 			gotoAndStop ("_over");
 			
-		} else if (__hasUp) {
+		} else if (__enabled && __hasUp) {
 			
 			gotoAndStop ("_up");
 			
@@ -1144,6 +1153,8 @@ class MovieClip extends Sprite #if (openfl_dynamic && haxe_ver < "4.0.0") implem
 	
 	
 	@:noCompletion private function __onRollOut (event:MouseEvent):Void {
+		
+		if (!__enabled) return;
 		
 		if (__mouseIsDown && __hasOver) {
 			
@@ -1160,7 +1171,7 @@ class MovieClip extends Sprite #if (openfl_dynamic && haxe_ver < "4.0.0") implem
 	
 	@:noCompletion private function __onRollOver (event:MouseEvent):Void {
 		
-		if (__hasOver) {
+		if (__enabled && __hasOver) {
 			
 			gotoAndStop ("_over");
 			
@@ -1228,6 +1239,8 @@ class MovieClip extends Sprite #if (openfl_dynamic && haxe_ver < "4.0.0") implem
 	@:noCompletion private function get_currentFrameLabel ():String { return __currentFrameLabel; }
 	@:noCompletion private function get_currentLabel ():String { return __currentLabel; }
 	@:noCompletion private function get_currentLabels ():Array<FrameLabel> { return __currentLabels; }
+	@:noCompletion private function get_enabled ():Bool { return __enabled; }
+	@:noCompletion private function set_enabled (value:Bool):Bool { return __enabled = value; }
 	@:noCompletion private function get_framesLoaded ():Int { return __totalFrames; }
 	@:noCompletion private function get_isPlaying ():Bool { return __playing; }
 	@:noCompletion private function get_totalFrames ():Int { return __totalFrames; }

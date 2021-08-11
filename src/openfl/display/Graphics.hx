@@ -1,23 +1,16 @@
 package openfl.display; #if !flash
 
 
-import lime.graphics.cairo.Cairo;
-import lime.graphics.opengl.GLBuffer;
-import lime.graphics.Image;
-import lime.graphics.RenderContext;
-import lime.utils.Float32Array;
-import lime.utils.ObjectPool;
-import lime.utils.UInt16Array;
 import openfl._internal.renderer.cairo.CairoGraphics;
 import openfl._internal.renderer.canvas.CanvasGraphics;
 import openfl._internal.renderer.context3D.Context3DBuffer;
 import openfl._internal.renderer.DrawCommandBuffer;
 import openfl._internal.renderer.DrawCommandReader;
 import openfl._internal.renderer.ShaderBuffer;
-import openfl.display.Shader;
+import openfl._internal.utils.ObjectPool;
 import openfl.display3D.IndexBuffer3D;
 import openfl.display3D.VertexBuffer3D;
-import openfl.errors.ArgumentError;
+import openfl.display.BlendMode;
 import openfl.display.GraphicsPathCommand;
 import openfl.display.GraphicsBitmapFill;
 import openfl.display.GraphicsEndFill;
@@ -25,10 +18,21 @@ import openfl.display.GraphicsGradientFill;
 import openfl.display.GraphicsPath;
 import openfl.display.GraphicsSolidFill;
 import openfl.display.GraphicsStroke;
+import openfl.display.Shader;
+import openfl.errors.ArgumentError;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.Vector;
+
+#if lime
+import lime.graphics.cairo.Cairo;
+import lime.graphics.opengl.GLBuffer;
+import lime.graphics.Image;
+import lime.graphics.RenderContext;
+import lime.utils.Float32Array;
+import lime.utils.UInt16Array;
+#end
 
 #if (js && html5)
 import js.html.CanvasElement;
@@ -74,6 +78,7 @@ import js.html.CanvasRenderingContext2D;
 	@:noCompletion private var __bounds:Rectangle;
 	@:noCompletion private var __commands:DrawCommandBuffer;
 	@:noCompletion private var __dirty (default, set):Bool = true;
+	@:noCompletion private var __hardwareDirty:Bool;
 	@:noCompletion private var __height:Int;
 	@:noCompletion private var __managed:Bool;
 	@:noCompletion private var __positionX:Float;
@@ -81,17 +86,18 @@ import js.html.CanvasRenderingContext2D;
 	@:noCompletion private var __quadBuffer:Context3DBuffer;
 	@:noCompletion private var __renderTransform:Matrix;
 	@:noCompletion private var __shaderBufferPool:ObjectPool<ShaderBuffer>;
+	@:noCompletion private var __softwareDirty:Bool;
 	@:noCompletion private var __strokePadding:Float;
 	@:noCompletion private var __transformDirty:Bool;
 	@:noCompletion private var __triangleIndexBuffer:IndexBuffer3D;
 	@:noCompletion private var __triangleIndexBufferCount:Int;
-	@:noCompletion private var __triangleIndexBufferData:UInt16Array;
+	@:noCompletion private var __triangleIndexBufferData:#if lime UInt16Array #else Dynamic #end;
 	@:noCompletion private var __usedShaderBuffers:List<ShaderBuffer>;
 	@:noCompletion private var __vertexBuffer:VertexBuffer3D;
 	@:noCompletion private var __vertexBufferCount:Int;
 	@:noCompletion private var __vertexBufferCountUVT:Int;
-	@:noCompletion private var __vertexBufferData:Float32Array;
-	@:noCompletion private var __vertexBufferDataUVT:Float32Array;
+	@:noCompletion private var __vertexBufferData:#if lime Float32Array #else Dynamic #end;
+	@:noCompletion private var __vertexBufferDataUVT:#if lime Float32Array #else Dynamic #end;
 	@:noCompletion private var __vertexBufferUVT:VertexBuffer3D;
 	@:noCompletion private var __visible:Bool;
 	//private var __cachedTexture:RenderTexture;
@@ -101,9 +107,9 @@ import js.html.CanvasRenderingContext2D;
 	
 	#if (js && html5)
 	@:noCompletion private var __canvas:CanvasElement;
-	@:noCompletion private var __context:CanvasRenderingContext2D;
+	@:noCompletion private var __context:#if lime CanvasRenderingContext2D #else Dynamic #end;
 	#else
-	@:noCompletion private var __cairo:Cairo;
+	@:noCompletion private var __cairo:#if lime Cairo #else Dynamic #end;
 	#end
 	
 	@:noCompletion private var __bitmap:BitmapData;
@@ -114,7 +120,6 @@ import js.html.CanvasRenderingContext2D;
 		__owner = owner;
 		
 		__commands = new DrawCommandBuffer ();
-		__shaderBufferPool = new ObjectPool<ShaderBuffer> (function () return new ShaderBuffer ());
 		__strokePadding = 0;
 		__positionX = 0;
 		__positionY = 0;
@@ -123,6 +128,8 @@ import js.html.CanvasRenderingContext2D;
 		__worldTransform = new Matrix ();
 		__width = 0;
 		__height = 0;
+		
+		__shaderBufferPool = new ObjectPool<ShaderBuffer> (function () return new ShaderBuffer ());
 		
 		#if (js && html5)
 		moveTo (0, 0);
@@ -315,11 +322,13 @@ import js.html.CanvasRenderingContext2D;
 		
 		if (shader != null) {
 			
+			#if lime
 			var shaderBuffer = __shaderBufferPool.get ();
 			__usedShaderBuffers.add (shaderBuffer);
 			shaderBuffer.update (cast shader);
 			
 			__commands.beginShaderFill (shaderBuffer);
+			#end
 			
 		}
 		
@@ -333,11 +342,13 @@ import js.html.CanvasRenderingContext2D;
 	 */
 	public function clear ():Void {
 		
+		#if lime
 		for (shaderBuffer in __usedShaderBuffers) {
 			
 			__shaderBufferPool.release (shaderBuffer);
 			
 		}
+		#end
 		
 		__usedShaderBuffers.clear ();
 		__commands.clear ();
@@ -1467,6 +1478,14 @@ import js.html.CanvasRenderingContext2D;
 	}
 	
 	
+	@:dox(hide) @:noCompletion public function overrideBlendMode (blendMode:BlendMode):Void {
+		
+		if (blendMode == null) blendMode = NORMAL;
+		__commands.overrideBlendMode (blendMode);
+	
+	}
+	
+	
 	public function readGraphicsData (recurse:Bool = true):Vector<IGraphicsData> {
 		
 		var graphicsData = new Vector<IGraphicsData> ();
@@ -1500,6 +1519,13 @@ import js.html.CanvasRenderingContext2D;
 			__dirty = true;
 			__transformDirty = true;
 			
+		}
+		#else
+		if (__bounds != null) {
+
+			__dirty = true;
+			__transformDirty = true;
+
 		}
 		#end
 		
@@ -1878,6 +1904,13 @@ import js.html.CanvasRenderingContext2D;
 		if (value && __owner != null) {
 			
 			@:privateAccess __owner.__setRenderDirty();
+			
+		}
+		
+		if (value) {
+			
+			__softwareDirty = true;
+			__hardwareDirty = true;
 			
 		}
 		

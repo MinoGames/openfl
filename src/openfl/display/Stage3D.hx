@@ -2,8 +2,6 @@ package openfl.display; #if !flash
 
 
 import haxe.Timer;
-import lime.graphics.opengl.GL;
-import lime.graphics.RenderContext;
 import openfl.display3D.Context3D;
 import openfl.display3D.Context3DBlendFactor;
 import openfl.display3D.Context3DProfile;
@@ -15,6 +13,11 @@ import openfl.events.Event;
 import openfl.events.EventDispatcher;
 import openfl.geom.Matrix3D;
 import openfl.Vector;
+
+#if lime
+import lime.graphics.opengl.GL;
+import lime.graphics.RenderContext;
+#end
 
 #if (js && html5)
 import js.html.webgl.RenderingContext;
@@ -46,6 +49,7 @@ class Stage3D extends EventDispatcher {
 	public var x (get, set):Float;
 	public var y (get, set):Float;
 	
+	@:noCompletion private var __contextLost:Bool;
 	@:noCompletion private var __contextRequested:Bool;
 	@:noCompletion private var __height:Int;
 	@:noCompletion private var __indexBuffer:IndexBuffer3D;
@@ -101,8 +105,16 @@ class Stage3D extends EventDispatcher {
 	
 	public function requestContext3D (context3DRenderMode:Context3DRenderMode = AUTO, profile:Context3DProfile = BASELINE):Void {
 		
+		if (__contextLost) {
+			
+			__contextRequested = true;
+			return;
+			
+		}
+		
 		if (context3D != null) {
 			
+			__contextRequested = true;
 			Timer.delay (__dispatchCreate, 1);
 			
 		} else if (!__contextRequested) {
@@ -124,6 +136,7 @@ class Stage3D extends EventDispatcher {
 	
 	@:noCompletion private function __createContext ():Void {
 		
+		#if lime
 		var stage = __stage;
 		var renderer = stage.__renderer;
 		
@@ -206,6 +219,7 @@ class Stage3D extends EventDispatcher {
 			#end
 			
 		}
+		#end
 		
 	}
 	
@@ -230,6 +244,20 @@ class Stage3D extends EventDispatcher {
 	}
 	
 	
+	@:noCompletion private function __lostContext ():Void {
+		
+		__contextLost = true;
+		
+		if (context3D != null) {
+			
+			context3D.__dispose ();
+			__contextRequested = true;
+			
+		}
+		
+	}
+	
+	
 	@:noCompletion private function __resize (width:Int, height:Int):Void {
 		
 		if (width != __width || height != __height) {
@@ -243,7 +271,7 @@ class Stage3D extends EventDispatcher {
 			}
 			#end
 			
-			__projectionTransform.copyRawDataFrom (Vector.ofArray ([
+			__projectionTransform.copyRawDataFrom (new Vector<Float> ([
 				2.0 / (width > 0 ? width : 1), 0.0, 0.0, 0.0,
 				0.0, -2.0 / (height > 0 ? height : 1), 0.0, 0.0,
 				0.0, 0.0, -2.0 / 2000, 0.0,
@@ -258,6 +286,14 @@ class Stage3D extends EventDispatcher {
 			__height = height;
 			
 		}
+		
+	}
+	
+	
+	@:noCompletion private function __restoreContext ():Void {
+		
+		__contextLost = false;
+		__createContext ();
 		
 	}
 	

@@ -3,10 +3,6 @@ package openfl._internal.text;
 
 import haxe.Timer;
 import haxe.Utf8;
-import lime.graphics.cairo.CairoFontFace;
-import lime.graphics.opengl.GLTexture;
-import lime.system.System;
-import lime.text.UTF8String;
 import openfl.Vector;
 import openfl.events.Event;
 import openfl.events.FocusEvent;
@@ -21,6 +17,12 @@ import openfl.text.TextFieldAutoSize;
 import openfl.text.TextFieldType;
 import openfl.text.TextFormat;
 import openfl.text.TextFormatAlign;
+
+#if lime
+import lime.graphics.cairo.CairoFontFace;
+import lime.graphics.opengl.GLTexture;
+import lime.system.System;
+#end
 
 #if (js && html5)
 import js.html.CanvasElement;
@@ -107,13 +109,13 @@ class TextEngine {
 	@:noCompletion private var __showCursor:Bool;
 	@:noCompletion private var __textFormat:TextFormat;
 	@:noCompletion private var __textLayout:TextLayout;
-	@:noCompletion private var __texture:GLTexture;
+	@:noCompletion private var __texture:#if lime GLTexture #else Dynamic #end;
 	//@:noCompletion private var __tileData:Map<Tilesheet, Array<Float>>;
 	//@:noCompletion private var __tileDataLength:Map<Tilesheet, Int>;
 	//@:noCompletion private var __tilesheets:Map<Tilesheet, Bool>;
 	private var __useIntAdvances:Null<Bool>;
 	
-	@:noCompletion @:dox(hide) public var __cairoFont:CairoFontFace;
+	@:noCompletion @:dox(hide) public var __cairoFont:#if lime CairoFontFace #else Dynamic #end;
 	@:noCompletion @:dox(hide) public var __font:Font;
 	
 	
@@ -306,12 +308,14 @@ class TextEngine {
 			
 			ascent = format.size * format.__ascent;
 			descent = format.size * format.__descent;
-			
+		
+		#if lime
 		} else if (font != null && font.unitsPerEM != 0) {
 			
 			ascent = (font.ascender / font.unitsPerEM) * format.size;
 			descent = Math.abs ((font.descender / font.unitsPerEM) * format.size);
 			
+		#end
 		} else {
 			
 			ascent = format.size;
@@ -606,19 +610,12 @@ class TextEngine {
 	
 	public function getLineBreakIndex (startIndex:Int = 0):Int {
 
-		var br = text.indexOf ("<br>", startIndex);
 		var cr = text.indexOf ("\n", startIndex);
 		var lf = text.indexOf ("\r", startIndex);
 		
-		if (cr == -1 && br == -1) return lf;
-		if (lf == -1 && br == -1) return cr;
-		if (lf == -1 && cr == -1) return br;
-
-		if (cr == -1) return Std.int (Math.min (br, lf));
-		if (lf == -1) return Std.int (Math.min (br, cr));
-		if (br == -1) return Std.int (Math.min (cr, lf));
-
-		return Std.int (Math.min (Math.min (cr, lf), br));
+		if (cr == -1) return lf;
+		if (lf == -1) return cr;
+		return cr < lf ? cr : lf;
 		
 	}
 	
@@ -707,28 +704,6 @@ class TextEngine {
 			var currentFormat = textField.__textFormat;
 			var ascent, descent, leading, heightValue;
 			
-			#if js
-			
-			// __context.font = getFont (currentFormat);
-			
-			if (currentFormat.__ascent != null) {
-				
-				ascent = currentFormat.size * currentFormat.__ascent;
-				descent = currentFormat.size * currentFormat.__descent;
-				
-			} else {
-				
-				ascent = currentFormat.size;
-				descent = currentFormat.size * 0.185;
-				
-			}
-			
-			leading = currentFormat.leading;
-			
-			heightValue = ascent + descent + leading;
-			
-			#elseif (lime_cffi)
-			
 			var font = getFontInstance (currentFormat);
 			
 			if (currentFormat.__ascent != null) {
@@ -736,11 +711,13 @@ class TextEngine {
 				ascent = currentFormat.size * currentFormat.__ascent;
 				descent = currentFormat.size * currentFormat.__descent;
 				
+			#if lime
 			} else if (font != null && font.unitsPerEM != 0) {
 				
 				ascent = (font.ascender / font.unitsPerEM) * currentFormat.size;
 				descent = Math.abs ((font.descender / font.unitsPerEM) * currentFormat.size);
 				
+			#end
 			} else {
 				
 				ascent = currentFormat.size;
@@ -751,8 +728,6 @@ class TextEngine {
 			leading = currentFormat.leading;
 			
 			heightValue = ascent + descent + leading;
-			
-			#end
 			
 			currentLineAscent = ascent;
 			currentLineDescent = descent;
@@ -1038,11 +1013,13 @@ class TextEngine {
 				ascent = currentFormat.size * currentFormat.__ascent;
 				descent = currentFormat.size * currentFormat.__descent;
 				
+			#if lime
 			} else if (font != null && font.unitsPerEM != 0) {
 				
 				ascent = (font.ascender / font.unitsPerEM) * currentFormat.size;
 				descent = Math.abs ((font.descender / font.unitsPerEM) * currentFormat.size);
 				
+			#end
 			} else {
 				
 				ascent = currentFormat.size;
@@ -1110,8 +1087,6 @@ class TextEngine {
 						var tempPositions = getPositions (text, tempIndex, tempRangeEnd);
 						positions = positions.concat(tempPositions);
 						
-						widthValue += getPositionsWidth (positions);
-						
 					}
 					
 					if (tempRangeEnd != endIndex) {
@@ -1125,7 +1100,12 @@ class TextEngine {
 						
 					}
 					
-					else break;
+					else {
+						
+						widthValue = getPositionsWidth (positions);
+						break;
+						
+					}
 					
 				}
 				
@@ -1245,14 +1225,14 @@ class TextEngine {
 			// breaks up words that are too long to fit in a single line
 			
 			var remainingPositions = positions;
-			var i, j, placeIndex, positionWidth;
+			var i, bufferCount, placeIndex, positionWidth;
 			var currentPosition, tempPositions;
 			
 			var tempWidth = getPositionsWidth (remainingPositions);
 			
 			while (offsetX + tempWidth > width - 2) {
 				
-				i = j = 0;
+				i = bufferCount = 0;
 				positionWidth = 0.0;
 				
 				while (offsetX + positionWidth < width - 2) {
@@ -1263,7 +1243,7 @@ class TextEngine {
 						
 						// skip Unicode character buffer positions
 						i++;
-						j++;
+						bufferCount++;
 						
 					}
 					
@@ -1276,11 +1256,11 @@ class TextEngine {
 					
 				}
 				
-				if (i < 2 && positionWidth > width - 4) {
-					// if the textfield is smaller than the first character in a line, automatically wrap the next character
+				if (i < 2 && positionWidth + offsetX > width - 2) {
+					// if there's no room to put even a single character, automatically wrap the next character
 					
 					// unless it's the last line of the long word
-					if (textIndex + i - j == endIndex) {
+					if (textIndex + i - bufferCount == endIndex) {
 						
 						break;
 						
@@ -1293,21 +1273,27 @@ class TextEngine {
 					// remove characters until the text fits one line
 					// because of combining letters potentially being broken up now, we have to redo the formatted positions each time
 					// TODO: this may not work exactly with Unicode buffer characters...
+					// TODO: maybe assume no combining letters, then compare result to i+1 and i-1 results?
 					while (offsetX + positionWidth > width - 2) {
 					
 						i--;
 						
-						if (i - j > 0) {
+						if (i - bufferCount > 0) {
 							
-							setFormattedPositions (textIndex, textIndex + i - j);
+							setFormattedPositions (textIndex, textIndex + i - bufferCount);
 							positionWidth = widthValue;
 							
 						}
 						
 						else {
 							
+							// TODO: does this run anymore?
+							
 							i = 1;
-							j = 0;
+							bufferCount = 0;
+							
+							setFormattedPositions (textIndex, textIndex + 1);
+							positionWidth = 0; // breaks out of the loops
 							
 						}
 						
@@ -1315,7 +1301,7 @@ class TextEngine {
 					
 				}
 				
-				placeIndex = textIndex + i - j;
+				placeIndex = textIndex + i - bufferCount;
 				placeFormattedText (placeIndex);
 				alignBaseline();
 				
@@ -1575,22 +1561,40 @@ class TextEngine {
 							
 						} else {
 							
-							layoutGroup.endIndex = endIndex;
+							var tempRangeEnd = endIndex < formatRange.end ? endIndex : formatRange.end;
+							
+							if (tempRangeEnd < endIndex) {
+								
+								positions = getPositions (text, textIndex, tempRangeEnd);
+								widthValue = getPositionsWidth (positions);
+								
+							}
+							
+							layoutGroup.endIndex = tempRangeEnd;
 							layoutGroup.positions = layoutGroup.positions.concat (positions);
 							layoutGroup.width += widthValue;
 							
-							if (endIndex == formatRange.end) {
+							offsetX += widthValue;
+							
+							if (tempRangeEnd == formatRange.end) {
 								
 								layoutGroup = null;
 								nextFormatRange ();
 								setLineMetrics ();
 								
+								textIndex = tempRangeEnd;
+								
+								if (tempRangeEnd != endIndex) {
+									
+									placeFormattedText (endIndex);
+									
+								}
+								
 							}
 							
 							// If next char is newline, process it immediately and prevent useless extra layout groups
+							// TODO: is this needed?
 							if (breakIndex == endIndex) endIndex++;
-							
-							offsetX += widthValue;
 							
 							textIndex = endIndex;
 							
@@ -1600,38 +1604,26 @@ class TextEngine {
 					
 					var nextSpaceIndex = text.indexOf (" ", textIndex);
 					
-					if (formatRange.end <= previousSpaceIndex) {
+					// Check if we can continue wrapping this line until the next line-break or end-of-String.
+					// When `previousSpaceIndex == breakIndex`, the loop has finished growing layoutGroup.endIndex until the end of this line.
+					
+					if (breakIndex == previousSpaceIndex) {
 						
-						layoutGroup = null;
-						textIndex = formatRange.end;
+						layoutGroup.endIndex = breakIndex;
 						
-						nextFormatRange ();
-						setLineMetrics ();
+						if (breakIndex - layoutGroup.startIndex - layoutGroup.positions.length < 0) {
 							
-					} else {
-						
-						// Check if we can continue wrapping this line until the next line-break or end-of-String.
-						// When `previousSpaceIndex == breakIndex`, the loop has finished growing layoutGroup.endIndex until the end of this line.
-						
-						if (breakIndex == previousSpaceIndex) {
-							
-							layoutGroup.endIndex = breakIndex;
-							
-							if (breakIndex - layoutGroup.startIndex - layoutGroup.positions.length < 0) {
-								
-								// Newline has no size
-								layoutGroup.positions.push (#if (js && html5) 0.0 #else null #end);
-								
-							}
-							
-							textIndex = breakIndex + 1;
+							// Newline has no size
+							layoutGroup.positions.push (#if (js && html5) 0.0 #else null #end);
 							
 						}
 						
-						previousSpaceIndex = spaceIndex;
-						spaceIndex = nextSpaceIndex;
+						textIndex = breakIndex + 1;
 						
 					}
+					
+					previousSpaceIndex = spaceIndex;
+					spaceIndex = nextSpaceIndex;
 					
 					if ((breakIndex > -1 && breakIndex <= textIndex && (spaceIndex > breakIndex || spaceIndex == -1)) || textIndex > text.length) {
 						
