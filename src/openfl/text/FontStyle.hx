@@ -38,7 +38,7 @@ package openfl.text; #if !flash #if !openfljs
 	
 	@:from private static function fromString (value:String):FontStyle {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case "bold": BOLD;
 			case "boldItalic": BOLD_ITALIC;
@@ -53,7 +53,7 @@ package openfl.text; #if !flash #if !openfljs
 	
 	@:to private static function toString (value:Int):String {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case FontStyle.BOLD: "bold";
 			case FontStyle.BOLD_ITALIC: "boldItalic";

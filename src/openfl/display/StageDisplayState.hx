@@ -26,7 +26,7 @@ package openfl.display; #if !flash #if !openfljs
 	
 	@:from private static function fromString (value:String):StageDisplayState {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case "fullScreen": FULL_SCREEN;
 			case "fullScreenInteractive": FULL_SCREEN_INTERACTIVE;
@@ -40,7 +40,7 @@ package openfl.display; #if !flash #if !openfljs
 	
 	@:to private static function toString (value:Int):String {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case StageDisplayState.FULL_SCREEN: "fullScreen";
 			case StageDisplayState.FULL_SCREEN_INTERACTIVE: "fullScreenInteractive";

@@ -19,7 +19,7 @@ import openfl._internal.utils.NullUtils;
 	
 	@:from private static function fromString (value:String):Context3DStencilAction {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case "decrementSaturate": DECREMENT_SATURATE;
 			case "decrementWrap": DECREMENT_WRAP;
@@ -37,7 +37,7 @@ import openfl._internal.utils.NullUtils;
 	
 	@:to private static function toString (value:Int):String {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case Context3DStencilAction.DECREMENT_SATURATE: "decrementSaturate";
 			case Context3DStencilAction.DECREMENT_WRAP: "decrementWrap";

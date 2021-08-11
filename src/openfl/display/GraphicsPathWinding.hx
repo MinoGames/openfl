@@ -30,7 +30,7 @@ package openfl.display; #if !flash #if !openfljs
 	
 	@:to private static function toString (value:Int):String {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case GraphicsPathWinding.EVEN_ODD: "evenOdd";
 			case GraphicsPathWinding.NON_ZERO: "nonZero";

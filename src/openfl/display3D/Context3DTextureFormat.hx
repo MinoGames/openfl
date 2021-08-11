@@ -17,7 +17,7 @@ import openfl._internal.utils.NullUtils;
 	
 	@:from private static function fromString (value:String):Context3DTextureFormat {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case "bgrPacked565": BGR_PACKED;
 			case "bgra": BGRA;
@@ -33,7 +33,7 @@ import openfl._internal.utils.NullUtils;
 	
 	@:to private static function toString (value:Int):String {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case Context3DTextureFormat.BGR_PACKED: "bgrPacked565";
 			case Context3DTextureFormat.BGRA: "bgra";

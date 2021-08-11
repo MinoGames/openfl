@@ -33,7 +33,7 @@ package openfl.display; #if !flash #if !openfljs
 	
 	@:from private static function fromString (value:String):JointStyle {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case "bevel": BEVEL;
 			case "miter": MITER;
@@ -47,7 +47,7 @@ package openfl.display; #if !flash #if !openfljs
 	
 	@:to private static function toString (value:Int):String {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case JointStyle.BEVEL: "bevel";
 			case JointStyle.MITER: "miter";

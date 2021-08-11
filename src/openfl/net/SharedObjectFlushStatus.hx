@@ -22,7 +22,7 @@ package openfl.net; #if !flash #if !openfljs
 	
 	@:from private static function fromString (value:String):SharedObjectFlushStatus {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case "flushed": FLUSHED;
 			case "pending": PENDING;
@@ -35,7 +35,7 @@ package openfl.net; #if !flash #if !openfljs
 	
 	@:to private static function toString (value:Int):String {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case SharedObjectFlushStatus.FLUSHED: "flushed";
 			case SharedObjectFlushStatus.PENDING: "pending";

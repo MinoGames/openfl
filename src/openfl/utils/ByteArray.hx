@@ -253,7 +253,7 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 	
 	@:to @:noCompletion private static function toLimeBytes (byteArray:ByteArray):LimeBytes {
 		
-		return fromBytes (byteArray);
+		return cast fromBytes (byteArray);
 		
 	}
 	

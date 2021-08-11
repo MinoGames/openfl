@@ -46,7 +46,7 @@ package openfl.display; #if !flash #if !openfljs
 	
 	@:from private static function fromString (value:String):LineScaleMode {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case "horizontal": HORIZONTAL;
 			case "none": NONE;
@@ -61,7 +61,7 @@ package openfl.display; #if !flash #if !openfljs
 	
 	@:to private static function toString (value:Int):String {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case LineScaleMode.HORIZONTAL: "horizontal";
 			case LineScaleMode.NONE: "none";

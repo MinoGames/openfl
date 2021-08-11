@@ -36,7 +36,7 @@ package openfl.display; #if !flash #if !openfljs
 	
 	@:from private static function fromString (value:String):PixelSnapping {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case "always": ALWAYS;
 			case "auto": AUTO;
@@ -50,7 +50,7 @@ package openfl.display; #if !flash #if !openfljs
 	
 	@:to private static function toString (value:Int):String {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case PixelSnapping.ALWAYS: "always";
 			case PixelSnapping.AUTO: "auto";

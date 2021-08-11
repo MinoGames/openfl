@@ -21,7 +21,7 @@ import openfl._internal.utils.NullUtils;
 	
 	@:from private static function fromString (value:String):Context3DBlendFactor {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case "destinationAlpha": DESTINATION_ALPHA;
 			case "destinationColor": DESTINATION_COLOR;
@@ -41,7 +41,7 @@ import openfl._internal.utils.NullUtils;
 	
 	@:to private static function toString (value:Int):String {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case Context3DBlendFactor.DESTINATION_ALPHA: "destinationAlpha";
 			case Context3DBlendFactor.DESTINATION_COLOR: "destinationColor";

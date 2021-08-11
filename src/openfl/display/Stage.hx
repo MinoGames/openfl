@@ -1876,53 +1876,59 @@ class Stage extends DisplayObjectContainer implements IModule {
 	}
 	
 	
-	@:noCompletion private function __handleError (e:Dynamic):Void {
-		
-		var event = new UncaughtErrorEvent (UncaughtErrorEvent.UNCAUGHT_ERROR, true, true, e);
-		
-		try {
-			
-			Lib.current.__loaderInfo.uncaughtErrorEvents.dispatchEvent (event);
-			
-		} catch (e:Dynamic) {}
-		
-		if (!event.__preventDefault) {
-			
-			#if mobile
-			Log.println (CallStack.toString (CallStack.exceptionStack ()));
-			Log.println (Std.string (e));
-			#end
-			
-			#if cpp
-			untyped __cpp__ ("throw e");
+	@SuppressWarnings("checkstyle:Dynamic")
+	@:noCompletion private function __handleError(e:Dynamic):Void
+	{
+		var event = new UncaughtErrorEvent(UncaughtErrorEvent.UNCAUGHT_ERROR, true, true, e);
+
+		try
+		{
+			Lib.current.__loaderInfo.uncaughtErrorEvents.dispatchEvent(event);
+		}
+		catch (e:Dynamic) {}
+
+		if (!event.__preventDefault)
+		{
+			// #if mobile
+			Log.println(CallStack.toString(CallStack.exceptionStack()));
+			Log.println(Std.string(e));
+			// #end
+
+			#if (cpp && !cppia)
+			untyped __cpp__("throw e");
 			#elseif neko
-			neko.Lib.rethrow (e);
+			neko.Lib.rethrow(e);
 			#elseif js
-			try {
+			try
+			{
+				#if (haxe >= "4.1.0")
+				var exc = e;
+				#else
 				var exc = @:privateAccess haxe.CallStack.lastException;
-				if (exc != null && Reflect.hasField (exc, "stack") && exc.stack != null && exc.stack != "") {
-					untyped __js__ ("console.log") (exc.stack);
+				#end
+				if (exc != null && Reflect.hasField(exc, "stack") && exc.stack != null && exc.stack != "")
+				{
+					untyped #if haxe4 js.Syntax.code #else __js__ #end ("console.log")(exc.stack);
 					e.stack = exc.stack;
-				} else {
-					var msg = CallStack.toString (CallStack.callStack ());
-					untyped __js__ ("console.log") (msg);
 				}
-			} catch (e2:Dynamic) {}
-			untyped __js__ ("throw e");
+				else
+				{
+					var msg = CallStack.toString(CallStack.callStack());
+					untyped #if haxe4 js.Syntax.code #else __js__ #end ("console.log")(msg);
+				}
+			}
+			catch (e2:Dynamic) {}
+			untyped #if haxe4 js.Syntax.code #else __js__ #end ("throw e");
 			#elseif cs
 			throw e;
-			//cs.Lib.rethrow (e);
+			// cs.Lib.rethrow (e);
 			#elseif hl
-			hl.Api.rethrow (e);
+			hl.Api.rethrow(e);
 			#else
 			throw e;
 			#end
-			
 		}
-		
 	}
-	
-	
 	
 	@:noCompletion private function __onKey (type:String, keyCode:KeyCode, modifier:KeyModifier):Void {
 		

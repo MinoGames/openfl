@@ -16,7 +16,7 @@ import openfl._internal.utils.NullUtils;
 	
 	@:from private static function fromString (value:String):Context3DVertexBufferFormat {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case "bytes4": BYTES_4;
 			case "float1": FLOAT_1;
@@ -31,7 +31,7 @@ import openfl._internal.utils.NullUtils;
 	
 	@:to private static function toString (value:Int):String {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case Context3DVertexBufferFormat.BYTES_4: "bytes4";
 			case Context3DVertexBufferFormat.FLOAT_1: "float1";

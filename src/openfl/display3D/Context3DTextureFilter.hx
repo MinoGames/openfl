@@ -17,7 +17,7 @@ import openfl._internal.utils.NullUtils;
 	
 	@:from private static function fromString (value:String):Context3DTextureFilter {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case "anisotropic16x": ANISOTROPIC16X;
 			case "anisotropic2x": ANISOTROPIC2X;
@@ -33,7 +33,7 @@ import openfl._internal.utils.NullUtils;
 	
 	@:to private static function toString (value:Int):String {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case Context3DTextureFilter.ANISOTROPIC16X: "anisotropic16x";
 			case Context3DTextureFilter.ANISOTROPIC2X: "anisotropic2x";

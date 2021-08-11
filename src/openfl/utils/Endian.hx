@@ -27,7 +27,7 @@ import lime.system.Endian in LimeEndian;
 	
 	@:from private static function fromLimeEndian (value:LimeEndian):Endian {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case LimeEndian.BIG_ENDIAN: BIG_ENDIAN;
 			case LimeEndian.LITTLE_ENDIAN: LITTLE_ENDIAN;
@@ -40,7 +40,7 @@ import lime.system.Endian in LimeEndian;
 	
 	@:from private static function fromString (value:String):Endian {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case "bigEndian": BIG_ENDIAN;
 			case "littleEndian": LITTLE_ENDIAN;
@@ -53,7 +53,7 @@ import lime.system.Endian in LimeEndian;
 	
 	@:to private static function toLimeEndian (value:Int):LimeEndian {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case Endian.BIG_ENDIAN: LimeEndian.BIG_ENDIAN;
 			case Endian.LITTLE_ENDIAN: LimeEndian.LITTLE_ENDIAN;
@@ -66,7 +66,7 @@ import lime.system.Endian in LimeEndian;
 	
 	@:to private static function toString (value:Int):String {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case Endian.BIG_ENDIAN: "bigEndian";
 			case Endian.LITTLE_ENDIAN: "littleEndian";
