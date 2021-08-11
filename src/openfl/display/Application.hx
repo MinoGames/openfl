@@ -1,7 +1,8 @@
 package openfl.display;
 
 
-import lime.app.Application in LimeApplication;
+import lime.app.Application as LimeApplication;
+import lime.ui.WindowAttributes;
 import openfl._internal.Lib;
 import openfl.display.MovieClip;
 
@@ -47,54 +48,6 @@ class Application extends LimeApplication {
 	}
 	
 	
-	#if (lime >= "7.0.0")
-	// TODO: override create window
-	#end
-	
-	
-	#if (lime < "7.0.0")
-	public override function create (config:Config):Void {
-		
-		this.config = config;
-		
-		backend.create (config);
-		
-		if (config != null) {
-			
-			if (Reflect.hasField (config, "fps")) {
-				
-				frameRate = config.fps;
-				
-			}
-			
-			if (Reflect.hasField (config, "windows")) {
-				
-				for (windowConfig in config.windows) {
-					
-					var window = new Window (windowConfig);
-					createWindow (window);
-					
-					#if (flash || html5)
-					break;
-					#end
-					
-				}
-				
-			}
-			
-			if (preloader == null || preloader.complete) {
-				
-				onPreloadComplete ();
-				
-			}
-			
-		}
-		
-	}
-	#end
-	
-	
-	#if (lime >= "7.0.0")
 	public override function createWindow (attributes:WindowAttributes):Window {
 		
 		var window = new Window (this, attributes);
@@ -151,7 +104,6 @@ class Application extends LimeApplication {
 		return true;
 		#end
 	}
-	#end
 	
 	
 }
