@@ -52,7 +52,7 @@ package openfl.text; #if !flash #if !openfljs
 	
 	@:to private static function toString (value:Int):String {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case TextFieldAutoSize.CENTER: "center";
 			case TextFieldAutoSize.LEFT: "left";

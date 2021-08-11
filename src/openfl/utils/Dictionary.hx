@@ -218,6 +218,12 @@ abstract Dictionary<K, V> (IMap<K, V>) {
 	}
 	#end
 	
+	#if (haxe_ver >= "4.1.0")
+	public function clear() {
+		types.clear();
+		values.clear();
+	}
+	#end
 	
 	public function keys ():Iterator<K> {
 		
@@ -316,6 +322,12 @@ abstract Dictionary<K, V> (IMap<K, V>) {
 	}
 	#end
 	
+	#if (haxe_ver >= "4.1.0")
+	public function clear() {
+		floatKeys.clear();
+		values.clear();
+	}
+	#end
 	
 	public function keys ():Iterator<K> {
 		
@@ -504,6 +516,11 @@ abstract Dictionary<K, V> (IMap<K, V>) {
 	}
 	#end
 	
+	#if (haxe_ver >= "4.1.0")
+	public function clear() {
+		map.clear();
+	}
+	#end
 	
 	public function exists (key:K):Bool {
 		

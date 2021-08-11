@@ -27,7 +27,7 @@ import openfl._internal.utils.NullUtils;
 	
 	@:to private static function toString (value:Int):String {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case Context3DMipFilter.MIPLINEAR: "miplinear";
 			case Context3DMipFilter.MIPNEAREST: "mipnearest";
