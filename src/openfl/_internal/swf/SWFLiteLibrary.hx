@@ -105,7 +105,7 @@ import openfl.utils.ByteArray;
 			
 			for (symbol in swf.symbols) {
 				
-				if (Std.is (symbol, BitmapSymbol) && cast (symbol, BitmapSymbol).path == id) {
+				if (Std.isOfType (symbol, BitmapSymbol) && cast (symbol, BitmapSymbol).path == id) {
 					
 					var bitmapSymbol:BitmapSymbol = cast symbol;
 					
@@ -171,7 +171,7 @@ import openfl.utils.ByteArray;
 			
 			for (symbol in swf.symbols) {
 				
-				if (Std.is (symbol, BitmapSymbol)) {
+				if (Std.isOfType (symbol, BitmapSymbol)) {
 					
 					bitmapSymbol = cast symbol;
 					
@@ -254,7 +254,7 @@ import openfl.utils.ByteArray;
 			
 			for (symbol in swf.symbols) {
 				
-				if (Std.is (symbol, BitmapSymbol) && cast (symbol, BitmapSymbol).path == id) {
+				if (Std.isOfType (symbol, BitmapSymbol) && cast (symbol, BitmapSymbol).path == id) {
 					
 					var bitmapSymbol:BitmapSymbol = cast symbol;
 					
@@ -307,7 +307,7 @@ import openfl.utils.ByteArray;
 		
 		for (symbol in swf.symbols) {
 			
-			if (Std.is (symbol, BitmapSymbol)) {
+			if (Std.isOfType (symbol, BitmapSymbol)) {
 				
 				bitmap = cast symbol;
 				Assets.cache.removeBitmapData (bitmap.path);

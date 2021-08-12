@@ -60,7 +60,7 @@ import openfl.Assets;
 				
 				if (symbol.className == className) {
 					
-					if (Std.is (symbol, SpriteSymbol)) {
+					if (Std.isOfType (symbol, SpriteSymbol)) {
 						
 						return cast (symbol, SpriteSymbol).__createObject (this);
 						
@@ -83,7 +83,7 @@ import openfl.Assets;
 			
 			if (symbol.className == className) {
 				
-				if (Std.is (symbol, BitmapSymbol)) {
+				if (Std.isOfType (symbol, BitmapSymbol)) {
 					
 					var bitmap:BitmapSymbol = cast symbol;
 					return Assets.getBitmapData (bitmap.path);

@@ -94,7 +94,7 @@
     "hxgenjs": "git+https://github.com/kevinresol/hxgenjs.git",
     "hxnodejs": "git+https://github.com/jgranick/hxnodejs.git",
     "hxp": "git+https://github.com/openfl/hxp.git",
-    "lime": "git+https://github.com/openfl/lime#develop",
+    "lime": "git+https://github.com/haxelime/lime#develop",
     "mocha": "^5.2.0",
     "mocha-chrome": "^1.1.0",
     "typedoc": "^0.11.1",

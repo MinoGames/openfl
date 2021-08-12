@@ -49,7 +49,7 @@ class DOMRenderer extends DisplayObjectRenderer {
 		#if (js && html5)
 		DisplayObject.__supportDOM = true;
 		
-		var prefix = untyped __js__ ("(function () {
+		var prefix = js.Syntax.code ("(function () {
 		  var styles = window.getComputedStyle(document.documentElement, ''),
 			pre = (Array.prototype.slice
 			  .call(styles)

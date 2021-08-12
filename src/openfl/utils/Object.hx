@@ -45,7 +45,7 @@ package openfl.utils;
 	
 	public inline function propertyIsEnumerable (name:String):Bool {
 		
-		return (this != null && Reflect.hasField (this, name) && Std.is (Reflect.field (this, name), Iterable_));
+		return (this != null && Reflect.hasField (this, name) && Std.isOfType (Reflect.field (this, name), Iterable_));
 		
 	}
 	

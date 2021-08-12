@@ -114,7 +114,7 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 		
 		#else
 		
-		if (Std.is (bytes, ByteArrayData)) {
+		if (Std.isOfType (bytes, ByteArrayData)) {
 			
 			return cast bytes;
 			
@@ -336,9 +336,9 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 	@:noCompletion private static function __init__ () {
 		
 		untyped global.Object.defineProperties (ByteArrayData.prototype, {
-			"bytesAvailable": { get: untyped __js__ ("function () { return this.get_bytesAvailable (); }") },
-			"endian": { get: untyped __js__ ("function () { return this.get_endian (); }"), set: untyped __js__ ("function (v) { return this.set_endian (v); }") },
-			"length": { get: untyped __js__ ("function () { return this.get_length (); }"), set: untyped __js__ ("function (v) { return this.set_length (v); }") },
+			"bytesAvailable": { get: js.Syntax.code ("function () { return this.get_bytesAvailable (); }") },
+			"endian": { get: js.Syntax.code ("function () { return this.get_endian (); }"), set: js.Syntax.code ("function (v) { return this.set_endian (v); }") },
+			"length": { get: js.Syntax.code ("function () { return this.get_length (); }"), set: js.Syntax.code ("function (v) { return this.set_length (v); }") },
 		});
 		
 	}

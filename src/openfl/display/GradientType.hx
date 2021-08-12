@@ -36,7 +36,7 @@ package openfl.display; #if !flash #if !openfljs
 	
 	@:to private static function toString (value:Int):String {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case GradientType.LINEAR: "linear";
 			case GradientType.RADIAL: "radial";

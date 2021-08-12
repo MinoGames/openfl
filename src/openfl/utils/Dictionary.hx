@@ -324,8 +324,8 @@ abstract Dictionary<K, V> (IMap<K, V>) {
 	
 	#if (haxe_ver >= "4.1.0")
 	public function clear() {
-		floatKeys.clear();
-		values.clear();
+        floatKeys = new Array<K>();
+		values = new Array<V>();
 	}
 	#end
 	

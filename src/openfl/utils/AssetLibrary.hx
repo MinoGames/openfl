@@ -64,7 +64,7 @@ import openfl.display.MovieClip;
 		
 		if (library != null) {
 			
-			if (Std.is (library, AssetLibrary)) {
+			if (Std.isOfType (library, AssetLibrary)) {
 				
 				return cast library;
 				

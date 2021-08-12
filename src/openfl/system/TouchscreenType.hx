@@ -22,7 +22,7 @@ package openfl.system; #if !flash #if !openfljs
 	
 	@:to private static function toString (value:Int):String {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case TouchscreenType.FINGER: "finger";
 			case TouchscreenType.NONE: "none";

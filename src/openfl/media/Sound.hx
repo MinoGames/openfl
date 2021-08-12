@@ -442,7 +442,7 @@ class Sound extends EventDispatcher {
 		var audioBuffer = new AudioBuffer ();
 		audioBuffer.bitsPerSample = format == "float" ? 32 : 16; // "short"
 		audioBuffer.channels = stereo ? 2 : 1;
-		audioBuffer.data = new UInt8Array (bytes);
+		audioBuffer.data = new UInt8Array (cast bytes); // This is an incorrect cast but we don't use this function anyway
 		audioBuffer.sampleRate = Std.int (sampleRate);
 		
 		__buffer = audioBuffer;

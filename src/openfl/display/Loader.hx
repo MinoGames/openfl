@@ -746,7 +746,7 @@ class Loader extends DisplayObjectContainer {
 				
 			}
 			
-			if (Std.is (library, AssetLibrary)) {
+			if (Std.isOfType (library, AssetLibrary)) {
 				
 				library.load ().onComplete (function (_) {
 					
@@ -784,7 +784,7 @@ class Loader extends DisplayObjectContainer {
 			//script.innerHTML = loader.data;
 			//Browser.document.head.appendChild (script);
 			
-			untyped __js__ ("eval") ('(function () {' + loader.data + '})()');
+			js.Syntax.code ("eval") ('(function () {' + loader.data + '})()');
 			#end
 			
 			contentLoaderInfo.dispatchEvent (new Event (Event.COMPLETE));

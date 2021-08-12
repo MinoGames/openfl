@@ -116,7 +116,7 @@ class CanvasTextField {
 				
 				if (clearRect == null) {
 					
-					clearRect = untyped __js__ ("(typeof navigator !== 'undefined' && typeof navigator['isCocoonJS'] !== 'undefined')");
+					clearRect = js.Syntax.code ("(typeof navigator !== 'undefined' && typeof navigator['isCocoonJS'] !== 'undefined')");
 					
 				}
 				

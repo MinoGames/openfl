@@ -639,15 +639,15 @@ class Stage extends DisplayObjectContainer implements IModule {
 	@:noCompletion private static function __init__ () {
 		
 		untyped Object.defineProperties (Stage.prototype, {
-			"color": { get: untyped __js__ ("function () { return this.get_color (); }"), set: untyped __js__ ("function (v) { return this.set_color (v); }") },
-			"contentsScaleFactor": { get: untyped __js__ ("function () { return this.get_contentsScaleFactor (); }") },
-			"displayState": { get: untyped __js__ ("function () { return this.get_displayState (); }"), set: untyped __js__ ("function (v) { return this.set_displayState (v); }") },
-			"focus": { get: untyped __js__ ("function () { return this.get_focus (); }"), set: untyped __js__ ("function (v) { return this.set_focus (v); }") },
-			"frameRate": { get: untyped __js__ ("function () { return this.get_frameRate (); }"), set: untyped __js__ ("function (v) { return this.set_frameRate (v); }") },
-			"fullScreenHeight": { get: untyped __js__ ("function () { return this.get_fullScreenHeight (); }") },
-			"fullScreenWidth": { get: untyped __js__ ("function () { return this.get_fullScreenWidth (); }") },
-			"quality": { get: untyped __js__ ("function () { return this.get_quality (); }"), set: untyped __js__ ("function (v) { return this.set_quality (v); }") },
-			"scaleMode": { get: untyped __js__ ("function () { return this.get_scaleMode (); }"), set: untyped __js__ ("function (v) { return this.set_scaleMode (v); }") },
+			"color": { get: js.Syntax.code ("function () { return this.get_color (); }"), set: js.Syntax.code ("function (v) { return this.set_color (v); }") },
+			"contentsScaleFactor": { get: js.Syntax.code ("function () { return this.get_contentsScaleFactor (); }") },
+			"displayState": { get: js.Syntax.code ("function () { return this.get_displayState (); }"), set: js.Syntax.code ("function (v) { return this.set_displayState (v); }") },
+			"focus": { get: js.Syntax.code ("function () { return this.get_focus (); }"), set: js.Syntax.code ("function (v) { return this.set_focus (v); }") },
+			"frameRate": { get: js.Syntax.code ("function () { return this.get_frameRate (); }"), set: js.Syntax.code ("function (v) { return this.set_frameRate (v); }") },
+			"fullScreenHeight": { get: js.Syntax.code ("function () { return this.get_fullScreenHeight (); }") },
+			"fullScreenWidth": { get: js.Syntax.code ("function () { return this.get_fullScreenWidth (); }") },
+			"quality": { get: js.Syntax.code ("function () { return this.get_quality (); }"), set: js.Syntax.code ("function (v) { return this.set_quality (v); }") },
+			"scaleMode": { get: js.Syntax.code ("function () { return this.get_scaleMode (); }"), set: js.Syntax.code ("function (v) { return this.set_scaleMode (v); }") },
 		});
 		
 	}
@@ -695,7 +695,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 		#if mac
 		__macKeyboard = true;
 		#elseif (js && html5)
-		__macKeyboard = untyped __js__ ("/AppleWebKit/.test (navigator.userAgent) && /Mobile\\/\\w+/.test (navigator.userAgent) || /Mac/.test (navigator.platform)");
+		__macKeyboard = js.Syntax.code ("/AppleWebKit/.test (navigator.userAgent) && /Mobile\\/\\w+/.test (navigator.userAgent) || /Mac/.test (navigator.platform)");
 		#end
 		
 		__clearBeforeRender = true;
@@ -1899,16 +1899,20 @@ class Stage extends DisplayObjectContainer implements IModule {
 			neko.Lib.rethrow (e);
 			#elseif js
 			try {
+                #if (haxe >= "4.1.0")
+				var exc = e;
+				#else
 				var exc = @:privateAccess haxe.CallStack.lastException;
+				#end
 				if (exc != null && Reflect.hasField (exc, "stack") && exc.stack != null && exc.stack != "") {
-					untyped __js__ ("console.log") (exc.stack);
+					js.Syntax.code ("console.log") (exc.stack);
 					e.stack = exc.stack;
 				} else {
 					var msg = CallStack.toString (CallStack.callStack ());
-					untyped __js__ ("console.log") (msg);
+					js.Syntax.code ("console.log") (msg);
 				}
 			} catch (e2:Dynamic) {}
-			untyped __js__ ("throw e");
+			js.Syntax.code ("throw e");
 			#elseif cs
 			throw e;
 			//cs.Lib.rethrow (e);

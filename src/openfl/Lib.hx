@@ -60,7 +60,7 @@ import js.Browser;
 		#if flash
 		return flash.Lib.as (v,c);
 		#else
-		return Std.is (v, c) ? v : null;
+		return Std.isOfType (v, c) ? v : null;
 		#end
 		
 	}
