@@ -302,13 +302,17 @@ import openfl.display.MovieClip;
 	}
 	
 	
-	public static function loadFromBytes (bytes:ByteArray, rootPath:String = null):#if java Future<LimeAssetLibrary> #else Future<AssetLibrary> #end {
+   public static function loadFromBytes (bytes:ByteArray, rootPath:String = null):#if (java && lime) Future<LimeAssetLibrary> #else Future<AssetLibrary> #end {
 		
+        #if lime
 		return AssetManifest.loadFromBytes (bytes, rootPath).then (function (manifest) {
 			
 			return loadFromManifest (manifest);
 			
 		});
+		#else
+		return cast Future.withValue (null);
+		#end
 		
 	}
 	

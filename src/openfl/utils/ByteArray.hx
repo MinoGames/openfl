@@ -251,11 +251,18 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 	#end
 	
 	
-	@:to @:noCompletion private static function toLimeBytes (byteArray:ByteArray):LimeBytes {
-		
-		return fromBytes (byteArray);
-		
+    #if lime
+	@:to @:noCompletion private static function toLimeBytes(byteArray:ByteArray):LimeBytes
+	{
+		#if display
+		return null;
+		#elseif flash
+		return Bytes.ofData(byteArray);
+		#else
+		return (byteArray : ByteArrayData);
+		#end
 	}
+	#end
 	
 	
 	
