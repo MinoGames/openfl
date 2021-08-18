@@ -75,6 +75,7 @@ class AssetManifest #if lime extends LimeAssetManifest #end
 
 	public static function fromBytes(bytes:Bytes, rootPath:String = null):AssetManifest
 	{
+
 		#if lime
 		var manifest = LimeAssetManifest.fromBytes(bytes, rootPath);
 		return __fromLimeManifest(manifest);

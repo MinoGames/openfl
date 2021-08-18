@@ -1,20 +1,21 @@
 package openfl.utils;
 
-
+import openfl.display.MovieClip;
 import lime.app.Future;
+
+#if lime
 import lime.graphics.Image;
 import lime.media.AudioBuffer;
 import lime.text.Font;
-import lime.utils.AssetLibrary in LimeAssetLibrary;
+import lime.utils.AssetLibrary as LimeAssetLibrary;
 import lime.utils.AssetManifest;
 import lime.utils.Bytes;
-import openfl.display.MovieClip;
+#end
 
 #if !openfl_debug
 @:fileXml('tags="haxe,release"')
 @:noDebug
 #end
-
 
 @:dox(hide) class AssetLibrary extends LimeAssetLibrary {
 	
