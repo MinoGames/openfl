@@ -1,6 +1,5 @@
 package openfl.utils;
 
-import lime.app.Future;
 import haxe.io.Bytes;
 #if lime
 import lime.utils.AssetManifest as LimeAssetManifest;
