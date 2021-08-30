@@ -3389,7 +3389,7 @@ class TextField extends InteractiveObject {
 		
 		// TODO: Better system
 		
-		if (event.relatedObject == null || !Std.is (event.relatedObject, TextField)) {
+		if (event.relatedObject == null || !Std.isOfType (event.relatedObject, TextField)) {
 			
 			__stopTextInput ();
 			

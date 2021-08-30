@@ -166,7 +166,7 @@ class FileReference extends EventDispatcher {
 		
 		#if desktop
 		
-		if (Std.is (data, ByteArrayData)) {
+		if (Std.isOfType (data, ByteArrayData)) {
 			
 			__data = data;
 			
@@ -184,7 +184,7 @@ class FileReference extends EventDispatcher {
 		
 		#elseif (js && html5)
 		
-		if (Std.is (data, ByteArrayData)) {
+		if (Std.isOfType (data, ByteArrayData)) {
 			
 			__data = data;
 			
@@ -299,7 +299,7 @@ class FileReference extends EventDispatcher {
 		
 		#if desktop
 		
-		if (Std.is (__urlLoader.data, ByteArrayData)) {
+		if (Std.isOfType (__urlLoader.data, ByteArrayData)) {
 			
 			__data = __urlLoader.data;
 			

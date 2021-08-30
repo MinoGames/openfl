@@ -663,7 +663,7 @@ class GLContext3D {
 		gl.bindFramebuffer (gl.FRAMEBUFFER, context.__framebuffer);
 		GLUtils.CheckGLError ();
 		
-		if (Std.is (texture, Texture)) {
+		if (Std.isOfType (texture, Texture)) {
 			
 			var texture2D:Texture = cast texture;
 			width = texture2D.__width;
@@ -672,7 +672,7 @@ class GLContext3D {
 			gl.framebufferTexture2D (gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture.__textureID, 0);
 			GLUtils.CheckGLError ();
 			
-		} else if (Std.is (texture, RectangleTexture)) {
+		} else if (Std.isOfType (texture, RectangleTexture)) {
 			
 			var rectTexture:RectangleTexture = cast texture;
 			width = rectTexture.__width;
@@ -681,7 +681,7 @@ class GLContext3D {
 			gl.framebufferTexture2D (gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture.__textureID, 0);
 			GLUtils.CheckGLError ();
 			
-		} else if (Std.is (texture, CubeTexture)) {
+		} else if (Std.isOfType (texture, CubeTexture)) {
 			
 			var cubeTexture:CubeTexture = cast texture;
 			width = cubeTexture.__size;
@@ -1404,12 +1404,12 @@ class GLContext3D {
 		
 		if (context.__renderToTexture != null) {
 		
-			if (Std.is (context.__renderToTexture, Texture)) {
+			if (Std.isOfType (context.__renderToTexture, Texture)) {
 			
 				var texture2D:Texture = cast context.__renderToTexture;
 				height = texture2D.__height;
 			
-			} else if (Std.is (context.__renderToTexture, RectangleTexture)) {
+			} else if (Std.isOfType (context.__renderToTexture, RectangleTexture)) {
 				
 				var rectTexture:RectangleTexture = cast context.__renderToTexture;
 				height = rectTexture.__height;

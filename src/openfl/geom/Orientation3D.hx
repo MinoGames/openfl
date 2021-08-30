@@ -22,7 +22,7 @@ package openfl.geom; #if !flash #if !openfljs
 	
 	@:to private static function toString (value:Int):String {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case Orientation3D.AXIS_ANGLE: "axisAngle";
 			case Orientation3D.EULER_ANGLES: "eulerAngles";

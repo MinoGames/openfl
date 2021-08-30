@@ -40,7 +40,7 @@ package openfl.filters; #if !flash #if !openfljs
 	
 	@:to private static function toString (value:Int):String {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case BitmapFilterType.FULL: "full";
 			case BitmapFilterType.INNER: "inner";

@@ -141,7 +141,7 @@ import openfl.Vector;
 		
 		#if (js && html5)
 		
-		if (untyped __js__ ("('ontouchstart' in document.documentElement) || (window.DocumentTouch && document instanceof DocumentTouch)")) {
+		if (js.Syntax.code ("('ontouchstart' in document.documentElement) || (window.DocumentTouch && document instanceof DocumentTouch)")) {
 			
 			return true;
 			

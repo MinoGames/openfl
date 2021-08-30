@@ -23,7 +23,7 @@ package openfl.utils; #if !flash #if !openfljs
 	
 	@:to private static function toString (value:Int):String {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case CompressionAlgorithm.DEFLATE: "deflate";
 			case CompressionAlgorithm.LZMA: "lzma";

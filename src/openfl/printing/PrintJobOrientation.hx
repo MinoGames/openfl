@@ -20,7 +20,7 @@ package openfl.printing; #if !flash #if !openfljs
 	
 	@:to private static function toString (value:Int):String {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case PrintJobOrientation.LANDSCAPE: "landscape";
 			case PrintJobOrientation.PORTRAIT: "portrait";

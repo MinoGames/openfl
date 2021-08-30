@@ -21,7 +21,7 @@ import openfl.utils.IDataInput;
 import openfl.utils.IDataOutput;
 
 #if (js && html5)
-import js.html.ArrayBuffer;
+import js.lib.ArrayBuffer;
 import js.html.WebSocket;
 import js.Browser;
 #end
@@ -205,7 +205,7 @@ class Socket extends EventDispatcher implements IDataInput implements IDataOutpu
 			try {
 				
 				#if (js && html5)
-				var buffer:ArrayBuffer = __output;
+				var buffer:ArrayBuffer = cast __output;
 				if (buffer.byteLength > __output.length) buffer = buffer.slice (0, __output.length);
 				__socket.send (buffer);
 				#else
@@ -613,7 +613,7 @@ class Socket extends EventDispatcher implements IDataInput implements IDataOutpu
 			
 		}
 		
-		if (Std.is (msg.data, String)) {
+		if (Std.isOfType (msg.data, String)) {
 			
 			__input.position = __input.length;
 			var cachePosition = __input.position;

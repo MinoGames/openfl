@@ -24,7 +24,7 @@ package openfl.desktop; #if !flash #if !openfljs
 	
 	@:to private static function toString (value:Int):String {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case ClipboardTransferMode.CLONE_ONLY: "cloneOnly";
 			case ClipboardTransferMode.CLONE_PREFERRED: "clonePreferred";

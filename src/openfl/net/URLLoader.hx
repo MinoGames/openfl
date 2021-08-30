@@ -395,7 +395,7 @@ class URLLoader extends EventDispatcher {
 					
 				}
 				
-			} else if (Std.is (request.data, Bytes)) {
+			} else if (Std.isOfType (request.data, Bytes)) {
 				
 				__httpRequest.data = request.data;
 				

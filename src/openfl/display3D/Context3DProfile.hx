@@ -39,7 +39,7 @@ import openfl._internal.utils.NullUtils;
 	
 	@:to private static function toString (value:Int):String {
 		
-		return switch (value) {
+		return switch (cast value) {
 			
 			case Context3DProfile.BASELINE: "baseline";
 			case Context3DProfile.BASELINE_CONSTRAINED: "baselineConstrained";

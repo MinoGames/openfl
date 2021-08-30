@@ -927,13 +927,13 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if (open
 	
 	public override function dispatchEvent (event:Event):Bool {
 		
-		if (Std.is (event, MouseEvent)) {
+		if (Std.isOfType (event, MouseEvent)) {
 			
 			var mouseEvent:MouseEvent = cast event;
 			mouseEvent.stageX = __getRenderTransform ().__transformX (mouseEvent.localX, mouseEvent.localY);
 			mouseEvent.stageY = __getRenderTransform ().__transformY (mouseEvent.localX, mouseEvent.localY);
 			
-		} else if (Std.is (event, TouchEvent)) {
+		} else if (Std.isOfType (event, TouchEvent)) {
 			
 			var touchEvent:TouchEvent = cast event;
 			touchEvent.stageX = __getRenderTransform ().__transformX (touchEvent.localX, touchEvent.localY);

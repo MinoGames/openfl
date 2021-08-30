@@ -72,7 +72,7 @@ class GLVertexBuffer3D {
 		var offset = byteArrayOffset + startVertex * vertexBuffer.__stride;
 		var length = numVertices * vertexBuffer.__vertexSize;
 		
-		uploadFromTypedArray (vertexBuffer, renderer, new Float32Array (data, offset, length));
+		uploadFromTypedArray (vertexBuffer, renderer, new Float32Array (cast data, offset, length)); // Incorrect cast but we don't use this class anyway
 		
 	}
 	
