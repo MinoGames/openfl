@@ -46,7 +46,7 @@ import openfl.display.MovieClip;
 	
 	public static function fromBytes (bytes:ByteArray, rootPath:String = null):AssetLibrary {
 		
-		return cast fromManifest (AssetManifest.fromBytes (bytes, rootPath));
+		return cast fromManifest (AssetManifest.fromBytes (cast bytes, rootPath));
 		
 	}
 	
@@ -304,7 +304,7 @@ import openfl.display.MovieClip;
 	
 	public static function loadFromBytes (bytes:ByteArray, rootPath:String = null):#if java Future<LimeAssetLibrary> #else Future<AssetLibrary> #end {
 		
-		return AssetManifest.loadFromBytes (bytes, rootPath).then (function (manifest) {
+		return AssetManifest.loadFromBytes (cast bytes, rootPath).then (function (manifest) {
 			
 			return loadFromManifest (manifest);
 			

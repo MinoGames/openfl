@@ -37,7 +37,7 @@ import format.amf3.Writer in AMF3Writer;
 @:access(openfl.utils.ByteArrayData)
 @:forward(bytesAvailable, endian, objectEncoding, position, clear, compress, deflate, inflate, readBoolean, readByte, readBytes, readDouble, readFloat, readInt, readMultiByte, readObject, readShort, readUnsignedByte, readUnsignedInt, readUnsignedShort, readUTF, readUTFBytes, toString, uncompress, writeBoolean, writeByte, writeBytes, writeDouble, writeFloat, writeInt, writeMultiByte, writeObject, writeShort, writeUnsignedInt, writeUTF, writeUTFBytes)
 
-
+@:transitive
 abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 	
 	
@@ -253,7 +253,13 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 	
 	@:to @:noCompletion private static function toLimeBytes (byteArray:ByteArray):LimeBytes {
 		
-		return fromBytes (byteArray);
+		#if display
+		return null;
+		#elseif flash
+		return Bytes.ofData(byteArray);
+		#else
+		return (byteArray : ByteArrayData);
+		#end
 		
 	}
 	
