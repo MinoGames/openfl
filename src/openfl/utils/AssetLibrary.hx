@@ -1,21 +1,20 @@
 package openfl.utils;
 
-import openfl.display.MovieClip;
-import lime.app.Future;
 
-#if lime
+import lime.app.Future;
 import lime.graphics.Image;
 import lime.media.AudioBuffer;
 import lime.text.Font;
-import lime.utils.AssetLibrary as LimeAssetLibrary;
+import lime.utils.AssetLibrary in LimeAssetLibrary;
 import lime.utils.AssetManifest;
 import lime.utils.Bytes;
-#end
+import openfl.display.MovieClip;
 
 #if !openfl_debug
 @:fileXml('tags="haxe,release"')
 @:noDebug
 #end
+
 
 @:dox(hide) class AssetLibrary extends LimeAssetLibrary {
 	
@@ -47,7 +46,7 @@ import lime.utils.Bytes;
 	
 	public static function fromBytes (bytes:ByteArray, rootPath:String = null):AssetLibrary {
 		
-		return cast fromManifest (AssetManifest.fromBytes (bytes, rootPath));
+		return cast fromManifest (AssetManifest.fromBytes (cast bytes, rootPath));
 		
 	}
 	
@@ -303,17 +302,13 @@ import lime.utils.Bytes;
 	}
 	
 	
-   public static function loadFromBytes (bytes:ByteArray, rootPath:String = null):#if (java && lime) Future<LimeAssetLibrary> #else Future<AssetLibrary> #end {
+	public static function loadFromBytes (bytes:ByteArray, rootPath:String = null):#if java Future<LimeAssetLibrary> #else Future<AssetLibrary> #end {
 		
-        #if lime
-		return AssetManifest.loadFromBytes (bytes, rootPath).then (function (manifest) {
+		return AssetManifest.loadFromBytes (cast bytes, rootPath).then (function (manifest) {
 			
 			return loadFromManifest (manifest);
 			
 		});
-		#else
-		return cast Future.withValue (null);
-		#end
 		
 	}
 	
