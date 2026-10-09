@@ -69,8 +69,10 @@ class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayO
 	@:noCompletion private var __bufferLength:Int;
 	
 	// Opt-in: reuse the vertex buffer while no tile is dirty. Only for tilemaps whose tiles change
-	// through setters; an in-place edit of a tile's matrix, rect or colorTransform, or of
-	// Tileset.__data, marks nothing dirty and would leave the old buffer on screen.
+	// through setters. These mark nothing dirty and leave the old buffer on screen until the tile's
+	// invalidate(): an in-place edit of a tile's matrix, rect or colorTransform, or of Tileset.__data;
+	// setting a tile's matrix, rect or colorTransform to the object it already holds; Tileset.addRect
+	// for an id a tile already uses; a new bitmapData on a tile's own tileset.
 	@:noCompletion private var __glReuseBuffer:Bool = false;
 	
 	// What GLTilemap baked into __bufferData, so an unchanged tilemap can reuse it
