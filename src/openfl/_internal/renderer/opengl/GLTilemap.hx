@@ -436,7 +436,7 @@ class GLTilemap {
 	
 	private static function canReuseBuffer (tilemap:Tilemap, renderer:OpenGLRenderer):Bool {
 		
-		if (tilemap.__bufferData == null || tilemap.__group.__dirty) return false;
+		if (!tilemap.__glReuseBuffer || tilemap.__bufferData == null || tilemap.__group.__dirty) return false;
 		if (tilemap.__glBuiltRenderer != renderer || tilemap.__glBuiltFrame != renderer.__frameCount - 1) return false;
 		
 		var tileset = tilemap.__tileset;
