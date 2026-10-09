@@ -216,6 +216,7 @@ class BitmapData implements IBitmapDrawable {
 	@:noCompletion private var __bufferData:Float32Array;
 	@:noCompletion private var __framebuffer:GLFramebuffer;
 	@:noCompletion private var __framebufferContext:#if (lime >= "7.0.0") RenderContext #else GLRenderContext #end;
+	@:noCompletion private var __glShared:Bool;
 	@:noCompletion private var __isMask:Bool;
 	@:noCompletion private var __isValid:Bool;
 	@:noCompletion private var __mask:DisplayObject;
@@ -431,6 +432,10 @@ class BitmapData implements IBitmapDrawable {
 			bitmapData.__texture = __texture;
 			bitmapData.__textureContext = __textureContext;
 			bitmapData.__isValid = true;
+			
+			// Both now point at the same GL objects, so neither may delete them on dispose
+			bitmapData.__glShared = true;
+			__glShared = true;
 			
 		} else {
 			
@@ -760,31 +765,38 @@ class BitmapData implements IBitmapDrawable {
 		
 		__surface = null;
 		
+		// Free the GL objects now instead of waiting for the garbage collector to finalize them;
+		// a disposed atlas otherwise holds its texture memory, often 16 MB, until the next collection.
+		// Objects shared with a clone or a Stage3D texture are left to the garbage collector.
+		#if (!flash && !display)
+		if (!__glShared && __texture != null && __textureContext != null) {
+			
+			#if (lime >= "7.0.0") __textureContext.webgl #else __textureContext #end.deleteTexture (__texture);
+			
+		}
+		
+		if (__buffer != null && __bufferContext != null) {
+			
+			#if (lime >= "7.0.0") __bufferContext.webgl #else __bufferContext #end.deleteBuffer (__buffer);
+			
+		}
+		
+		if (!__glShared && __framebufferContext != null) {
+			
+			var gl = #if (lime >= "7.0.0") __framebufferContext.webgl #else __framebufferContext #end;
+			if (__framebuffer != null) gl.deleteFramebuffer (__framebuffer);
+			if (__stencilBuffer != null) gl.deleteRenderbuffer (__stencilBuffer);
+			
+		}
+		#end
+		
 		__buffer = null;
+		__bufferContext = null;
 		__framebuffer = null;
 		__framebufferContext = null;
+		__stencilBuffer = null;
 		__texture = null;
 		__textureContext = null;
-		
-		//if (__texture != null) {
-			//
-			//var renderer = @:privateAccess Lib.current.stage.__renderer;
-			//
-			//if(renderer != null) {
-				//
-				//var renderer = @:privateAccess renderer.renderer;
-				//var gl = renderer.__gl;
-				//
-				//if (gl != null) {
-					//
-					//gl.deleteTexture (__texture);
-					//__texture = null;
-					//
-				//}
-				//
-			//}
-			//
-		//}
 		
 	}
 	
@@ -1190,6 +1202,7 @@ class BitmapData implements IBitmapDrawable {
 		var bitmapData = new BitmapData (texture.__width, texture.__height, true, 0);
 		bitmapData.readable = false;
 		bitmapData.__texture = texture.__textureID;
+		bitmapData.__glShared = true;
 		bitmapData.__textureContext = texture.__textureContext;
 		bitmapData.image = null;
 		return bitmapData;

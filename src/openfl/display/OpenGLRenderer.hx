@@ -71,6 +71,7 @@ class OpenGLRenderer extends DisplayObjectRenderer {
 	public var gl:GLRenderContext;
 	#end
 	
+	@:noCompletion private var __frameCount:Int = 0;
 	@:noCompletion private var __clipRects:Array<Rectangle>;
 	@:noCompletion private var __currentDisplayShader:Shader;
 	@:noCompletion private var __currentGraphicsShader:Shader;
@@ -761,6 +762,8 @@ class OpenGLRenderer extends DisplayObjectRenderer {
 	
 	
 	@:noCompletion private override function __render (object:IBitmapDrawable):Void {
+		
+		__frameCount++;
 		
 		// TODO: Handle restoration of state after Stage3D render better?
 		__gl.disable (__gl.CULL_FACE);

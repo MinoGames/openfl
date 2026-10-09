@@ -9,6 +9,7 @@ import openfl.geom.Rectangle;
 #if !flash
 import lime.graphics.opengl.GLBuffer;
 import lime.utils.Float32Array;
+import openfl.geom.ColorTransform;
 import openfl._internal.renderer.cairo.CairoBitmap;
 import openfl._internal.renderer.cairo.CairoDisplayObject;
 import openfl._internal.renderer.cairo.CairoTilemap;
@@ -66,6 +67,16 @@ class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayO
 	@:noCompletion private var __bufferData:Float32Array;
 	@:noCompletion private var __bufferDirty:Bool;
 	@:noCompletion private var __bufferLength:Int;
+	
+	// What GLTilemap baked into __bufferData, so an unchanged tilemap can reuse it
+	@:noCompletion private var __glBuiltAlpha:Float;
+	@:noCompletion private var __glBuiltBitmapData:BitmapData;
+	@:noCompletion private var __glBuiltColorTransform:ColorTransform;
+	@:noCompletion private var __glBuiltFrame:Int = -1;
+	@:noCompletion private var __glBuiltRenderer:OpenGLRenderer;
+	@:noCompletion private var __glBuiltRoundPixels:Bool;
+	@:noCompletion private var __glBuiltStride:Int;
+	@:noCompletion private var __glBuiltTileset:Tileset;
 	@:noCompletion private var __height:Int;
 	@:noCompletion private var __width:Int;
 	#end

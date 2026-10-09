@@ -56,7 +56,16 @@ class GLTilemap {
 	
 	public static function buildBuffer (tilemap:Tilemap, renderer:OpenGLRenderer):Void {
 		
-		if (!tilemap.__renderable || tilemap.__group.__tiles.length == 0 || tilemap.__worldAlpha <= 0) return;
+		if (!tilemap.__renderable || tilemap.__worldAlpha <= 0) return;
+		
+		if (tilemap.__group.__tiles.length == 0) {
+			
+			// Nothing to draw; clearing the flag stops an empty tilemap from forcing a stage render every frame
+			tilemap.__group.__dirty = false;
+			tilemap.__bufferLength = 0;
+			return;
+			
+		}
 		
 		bufferLength = 0;
 		bufferPosition = 0;
@@ -214,6 +223,14 @@ class GLTilemap {
 				x4 = tileTransform.__transformX (tileWidth, tileHeight);
 				y4 = tileTransform.__transformY (tileWidth, tileHeight);
 				
+				// The reservations above assume one tile per child; a nested container can use more
+				if (bufferPosition + (stride * 6) > __bufferData.length) {
+					
+					resizeBuffer (tilemap, bufferPosition + (stride * 6));
+					__bufferData = tilemap.__bufferData;
+					
+				}
+				
 				offset = bufferPosition;
 				
 				__bufferData[offset + 0] = x;
@@ -366,6 +383,7 @@ class GLTilemap {
 				
 				tilemap.__bufferContext = cast renderer.__context;
 				tilemap.__buffer = gl.createBuffer ();
+				tilemap.__bufferDirty = true;
 				
 			}
 			
@@ -373,7 +391,7 @@ class GLTilemap {
 			
 			if (tilemap.__bufferDirty) {
 				
-				gl.bufferData (gl.ARRAY_BUFFER, tilemap.__bufferData, gl.DYNAMIC_DRAW);
+				gl.bufferData (gl.ARRAY_BUFFER, tilemap.__bufferData.subarray (0, tilemap.__bufferLength), gl.DYNAMIC_DRAW);
 				tilemap.__bufferDirty = false;
 				
 			}
@@ -416,11 +434,91 @@ class GLTilemap {
 	}
 	
 	
+	private static function canReuseBuffer (tilemap:Tilemap, renderer:OpenGLRenderer):Bool {
+		
+		if (tilemap.__bufferData == null || tilemap.__group.__dirty) return false;
+		if (tilemap.__glBuiltRenderer != renderer || tilemap.__glBuiltFrame != renderer.__frameCount - 1) return false;
+		
+		var tileset = tilemap.__tileset;
+		if (tileset != tilemap.__glBuiltTileset || (tileset != null ? tileset.__bitmapData : null) != tilemap.__glBuiltBitmapData) return false;
+		
+		if (tilemap.__worldAlpha != tilemap.__glBuiltAlpha || renderer.__roundPixels != tilemap.__glBuiltRoundPixels) return false;
+		if (getStride (tilemap) != tilemap.__glBuiltStride) return false;
+		
+		var color = tilemap.__worldColorTransform;
+		var built = tilemap.__glBuiltColorTransform;
+		if ((color == null) != (built == null)) return false;
+		
+		return color == null || (color.redMultiplier == built.redMultiplier
+			&& color.greenMultiplier == built.greenMultiplier
+			&& color.blueMultiplier == built.blueMultiplier
+			&& color.alphaMultiplier == built.alphaMultiplier
+			&& color.redOffset == built.redOffset
+			&& color.greenOffset == built.greenOffset
+			&& color.blueOffset == built.blueOffset
+			&& color.alphaOffset == built.alphaOffset);
+		
+	}
+	
+	
+	private static inline function getStride (tilemap:Tilemap):Int {
+		
+		var stride = 4;
+		if (tilemap.tileAlphaEnabled) stride++;
+		if (tilemap.tileColorTransformEnabled) stride += 8;
+		return stride;
+		
+	}
+	
+	
+	private static function rememberBuild (tilemap:Tilemap, renderer:OpenGLRenderer):Void {
+		
+		var tileset = tilemap.__tileset;
+		tilemap.__glBuiltTileset = tileset;
+		tilemap.__glBuiltBitmapData = tileset != null ? tileset.__bitmapData : null;
+		tilemap.__glBuiltAlpha = tilemap.__worldAlpha;
+		tilemap.__glBuiltRoundPixels = renderer.__roundPixels;
+		tilemap.__glBuiltStride = getStride (tilemap);
+		
+		var color = tilemap.__worldColorTransform;
+		
+		if (color == null) {
+			
+			tilemap.__glBuiltColorTransform = null;
+			
+		} else {
+			
+			if (tilemap.__glBuiltColorTransform == null) tilemap.__glBuiltColorTransform = new ColorTransform ();
+			var built = tilemap.__glBuiltColorTransform;
+			built.redMultiplier = color.redMultiplier;
+			built.greenMultiplier = color.greenMultiplier;
+			built.blueMultiplier = color.blueMultiplier;
+			built.alphaMultiplier = color.alphaMultiplier;
+			built.redOffset = color.redOffset;
+			built.greenOffset = color.greenOffset;
+			built.blueOffset = color.blueOffset;
+			built.alphaOffset = color.alphaOffset;
+			
+		}
+		
+	}
+	
+	
 	public static function render (tilemap:Tilemap, renderer:OpenGLRenderer):Void {
 		
 		if (!tilemap.__renderable || tilemap.__worldAlpha <= 0) return;
 		
-		buildBuffer (tilemap, renderer);
+		if (!canReuseBuffer (tilemap, renderer)) {
+			
+			buildBuffer (tilemap, renderer);
+			rememberBuild (tilemap, renderer);
+			
+		}
+		
+		// Another renderer or a skipped frame clears the tile dirty flags without updating this buffer,
+		// so the buffer is reused only when this renderer also drew the tilemap on the previous frame
+		tilemap.__glBuiltRenderer = renderer;
+		tilemap.__glBuiltFrame = renderer.__frameCount;
 		
 		if (tilemap.__bufferLength == 0) return;
 		
@@ -631,7 +729,8 @@ class GLTilemap {
 			
 		} else if (length > tilemap.__bufferData.length) {
 			
-			var buffer = new Float32Array (length);
+			var capacity = Std.int (tilemap.__bufferData.length * 1.5);
+			var buffer = new Float32Array (capacity > length ? capacity : length);
 			buffer.set (tilemap.__bufferData);
 			tilemap.__bufferData = buffer;
 			
